@@ -72,6 +72,16 @@ body {
   min-height: 8.75rem;
 }
 
+.quote-stage-compact {
+  min-height: 5.25rem;
+}
+
+@media (min-width: 640px) {
+  .quote-stage-compact {
+    min-height: 6rem;
+  }
+}
+
 @keyframes quote-enter {
   from {
     opacity: 0;
@@ -106,20 +116,25 @@ body {
   animation: quote-exit 0.52s var(--ease-soft-out) both;
 }
 
-/* Book pull-out / close on the shelf */
-.book-motion {
-  transition: width var(--book-close) var(--ease-smooth);
+/* Book pull-out / close on the shelf — layout width stays fixed; only transform animates */
+.book.is-open {
+  z-index: 20;
 }
 
-.book-motion.is-open {
-  transition: width var(--book-open) var(--ease-smooth) 90ms;
+/* Same-row neighbors slide aside when a book opens (transform only — no flex reflow). */
+.book-slot-motion {
+  transition: transform var(--book-close) var(--ease-smooth);
+}
+
+.book-slot-motion.is-shifted {
+  transition: transform var(--book-open) var(--ease-smooth);
 }
 
 .book-inner-motion {
   transition: transform var(--book-close) var(--ease-smooth);
 }
 
-.book-motion.is-open .book-inner-motion {
+.book.is-open .book-inner-motion {
   transition: transform var(--book-open) var(--ease-snap-open) 60ms;
 }
 
@@ -129,7 +144,7 @@ body {
     transform var(--book-close) var(--ease-smooth);
 }
 
-.book-motion.is-open .book-cover-motion {
+.book.is-open .book-cover-motion {
   transition:
     box-shadow var(--book-open) var(--ease-smooth) 120ms,
     transform var(--book-open) var(--ease-smooth) 120ms;

@@ -15,6 +15,18 @@ const samples = [
   { title: "Edge of Elsewhere", author: "T. Amari", color: [0.42, 0.12, 0.18], pages: 96 },
   { title: "Unfinished Letters", author: "H. Doyle", color: [0.38, 0.28, 0.2], pages: 40 },
   { title: "Neon and Quiet", author: "V. Lux", color: [0.75, 0.15, 0.45], pages: 12 },
+  { title: "Saltwater Archives", author: "P. Ndiaye", color: [0.12, 0.32, 0.52], pages: 28 },
+  { title: "The Last Cartographer", author: "I. Voss", color: [0.28, 0.22, 0.18], pages: 64 },
+  { title: "Rooms of Rain", author: "C. Hale", color: [0.48, 0.58, 0.62], pages: 11 },
+  { title: "Iron & Ivy", author: "D. Okonkwo", color: [0.22, 0.42, 0.18], pages: 36 },
+  { title: "Ghost Frequencies", author: "L. Merritt", color: [0.52, 0.48, 0.55], pages: 9 },
+  { title: "The Weight of Clouds", author: "A. Sato", color: [0.68, 0.72, 0.78], pages: 52 },
+  { title: "Broken Compass", author: "R. Ellis", color: [0.55, 0.28, 0.14], pages: 18 },
+  { title: "Velvet Static", author: "M. Cruz", color: [0.32, 0.08, 0.22], pages: 7 },
+  { title: "Maps for the Lost", author: "F. Anders", color: [0.15, 0.35, 0.38], pages: 44 },
+  { title: "Half-Life Library", author: "J. Kim", color: [0.62, 0.62, 0.2], pages: 22 },
+  { title: "Dust and Orbit", author: "E. Vaughn", color: [0.4, 0.25, 0.32], pages: 80 },
+  { title: "The Slow Horizon", author: "N. Patel", color: [0.78, 0.52, 0.38], pages: 15 },
 ];
 
 const bodyQuotes = [

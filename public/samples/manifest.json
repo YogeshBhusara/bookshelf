@@ -5,84 +5,264 @@
       "title": "The Quiet Machine",
       "author": "A. Rivera",
       "pages": 14,
-      "color": [0.13, 0.16, 0.42]
+      "color": [
+        0.13,
+        0.16,
+        0.42
+      ]
     },
     {
       "file": "field-notes-on-light.pdf",
       "title": "Field Notes on Light",
       "author": "M. Okafor",
       "pages": 32,
-      "color": [0.62, 0.2, 0.18]
+      "color": [
+        0.62,
+        0.2,
+        0.18
+      ]
     },
     {
       "file": "paper-cities.pdf",
       "title": "Paper Cities",
       "author": "L. Tan",
       "pages": 8,
-      "color": [0.1, 0.38, 0.32]
+      "color": [
+        0.1,
+        0.38,
+        0.32
+      ]
     },
     {
       "file": "midnight-atlas.pdf",
       "title": "Midnight Atlas",
       "author": "S. Chen",
       "pages": 48,
-      "color": [0.18, 0.1, 0.35]
+      "color": [
+        0.18,
+        0.1,
+        0.35
+      ]
     },
     {
       "file": "signals-in-the-static.pdf",
       "title": "Signals in the Static",
       "author": "J. Park",
       "pages": 6,
-      "color": [0.35, 0.35, 0.38]
+      "color": [
+        0.35,
+        0.35,
+        0.38
+      ]
     },
     {
       "file": "the-glass-orchard.pdf",
       "title": "The Glass Orchard",
       "author": "E. Moss",
       "pages": 72,
-      "color": [0.08, 0.42, 0.44]
+      "color": [
+        0.08,
+        0.42,
+        0.44
+      ]
     },
     {
       "file": "borrowed-hours.pdf",
       "title": "Borrowed Hours",
       "author": "R. Singh",
       "pages": 24,
-      "color": [0.72, 0.45, 0.12]
+      "color": [
+        0.72,
+        0.45,
+        0.12
+      ]
     },
     {
       "file": "winter-syntax.pdf",
       "title": "Winter Syntax",
       "author": "K. Berg",
       "pages": 16,
-      "color": [0.55, 0.68, 0.78]
+      "color": [
+        0.55,
+        0.68,
+        0.78
+      ]
     },
     {
       "file": "small-fires.pdf",
       "title": "Small Fires",
       "author": "N. Wells",
       "pages": 5,
-      "color": [0.85, 0.35, 0.15]
+      "color": [
+        0.85,
+        0.35,
+        0.15
+      ]
     },
     {
       "file": "edge-of-elsewhere.pdf",
       "title": "Edge of Elsewhere",
       "author": "T. Amari",
       "pages": 96,
-      "color": [0.42, 0.12, 0.18]
+      "color": [
+        0.42,
+        0.12,
+        0.18
+      ]
     },
     {
       "file": "unfinished-letters.pdf",
       "title": "Unfinished Letters",
       "author": "H. Doyle",
       "pages": 40,
-      "color": [0.38, 0.28, 0.2]
+      "color": [
+        0.38,
+        0.28,
+        0.2
+      ]
     },
     {
       "file": "neon-and-quiet.pdf",
       "title": "Neon and Quiet",
       "author": "V. Lux",
       "pages": 12,
-      "color": [0.75, 0.15, 0.45]
+      "color": [
+        0.75,
+        0.15,
+        0.45
+      ]
+    },
+    {
+      "file": "saltwater-archives.pdf",
+      "title": "Saltwater Archives",
+      "author": "P. Ndiaye",
+      "pages": 28,
+      "color": [
+        0.12,
+        0.32,
+        0.52
+      ]
+    },
+    {
+      "file": "the-last-cartographer.pdf",
+      "title": "The Last Cartographer",
+      "author": "I. Voss",
+      "pages": 64,
+      "color": [
+        0.28,
+        0.22,
+        0.18
+      ]
+    },
+    {
+      "file": "rooms-of-rain.pdf",
+      "title": "Rooms of Rain",
+      "author": "C. Hale",
+      "pages": 11,
+      "color": [
+        0.48,
+        0.58,
+        0.62
+      ]
+    },
+    {
+      "file": "iron-ivy.pdf",
+      "title": "Iron & Ivy",
+      "author": "D. Okonkwo",
+      "pages": 36,
+      "color": [
+        0.22,
+        0.42,
+        0.18
+      ]
+    },
+    {
+      "file": "ghost-frequencies.pdf",
+      "title": "Ghost Frequencies",
+      "author": "L. Merritt",
+      "pages": 9,
+      "color": [
+        0.52,
+        0.48,
+        0.55
+      ]
+    },
+    {
+      "file": "the-weight-of-clouds.pdf",
+      "title": "The Weight of Clouds",
+      "author": "A. Sato",
+      "pages": 52,
+      "color": [
+        0.68,
+        0.72,
+        0.78
+      ]
+    },
+    {
+      "file": "broken-compass.pdf",
+      "title": "Broken Compass",
+      "author": "R. Ellis",
+      "pages": 18,
+      "color": [
+        0.55,
+        0.28,
+        0.14
+      ]
+    },
+    {
+      "file": "velvet-static.pdf",
+      "title": "Velvet Static",
+      "author": "M. Cruz",
+      "pages": 7,
+      "color": [
+        0.32,
+        0.08,
+        0.22
+      ]
+    },
+    {
+      "file": "maps-for-the-lost.pdf",
+      "title": "Maps for the Lost",
+      "author": "F. Anders",
+      "pages": 44,
+      "color": [
+        0.15,
+        0.35,
+        0.38
+      ]
+    },
+    {
+      "file": "half-life-library.pdf",
+      "title": "Half-Life Library",
+      "author": "J. Kim",
+      "pages": 22,
+      "color": [
+        0.62,
+        0.62,
+        0.2
+      ]
+    },
+    {
+      "file": "dust-and-orbit.pdf",
+      "title": "Dust and Orbit",
+      "author": "E. Vaughn",
+      "pages": 80,
+      "color": [
+        0.4,
+        0.25,
+        0.32
+      ]
+    },
+    {
+      "file": "the-slow-horizon.pdf",
+      "title": "The Slow Horizon",
+      "author": "N. Patel",
+      "pages": 15,
+      "color": [
+        0.78,
+        0.52,
+        0.38
+      ]
     }
   ]
 }

@@ -3,9 +3,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useBookStore } from "@/store/useBookStore";
 import { BookSpine } from "./BookSpine";
-import { AddBookTile } from "./AddBookTile";
 import { COVER_WIDTH, SHELF_HEIGHT } from "./constants";
-import { computeRowEndIndices } from "./rowLayout";
+import { computeRowEndIndices, getRowRange } from "./rowLayout";
 
 interface BookshelfProps {
   onRequestDelete: (id: string) => void;
@@ -20,13 +19,11 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
   const covers = useBookStore((s) => s.covers);
   const readingProgress = useBookStore((s) => s.readingProgress);
   const activeIndex = useBookStore((s) => s.activeIndex);
-  const importProgress = useBookStore((s) => s.importProgress);
   const hasMore = useBookStore((s) => s.hasMore);
   const loadingMore = useBookStore((s) => s.loadingMore);
   const totalCount = useBookStore((s) => s.totalCount);
   const setActiveIndex = useBookStore((s) => s.setActiveIndex);
   const openReader = useBookStore((s) => s.openReader);
-  const addBooks = useBookStore((s) => s.addBooks);
   const loadCover = useBookStore((s) => s.loadCover);
   const loadMoreBooks = useBookStore((s) => s.loadMoreBooks);
 
@@ -90,10 +87,17 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     };
   }, [activeIndex, setActiveIndex]);
 
-  return (
-    <div className="relative space-y-8">
-      <AddBookTile onFiles={addBooks} importProgress={importProgress} />
+  const activeRow =
+    activeIndex >= 0
+      ? getRowRange(activeIndex, rowEndIndices, books.length)
+      : null;
+  const expandShift =
+    activeIndex >= 0 && !rowEndIndices.has(activeIndex)
+      ? COVER_WIDTH - books[activeIndex].spineWidth
+      : 0;
 
+  return (
+    <div className="relative">
       <div>
         {totalCount > 0 ? (
           <p className="mb-4 text-xs text-white/35">
@@ -106,21 +110,32 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
         {/* Tight flex wrap — books sit spine-to-spine and wrap into new rows naturally. */}
         <div
           ref={gridRef}
-          className="flex flex-wrap items-end gap-x-0.5 gap-y-8 pb-2"
+          className="flex flex-wrap items-end gap-x-0.5 gap-y-8 overflow-visible pb-2"
           style={{ minHeight: `${SHELF_HEIGHT}px`, perspective: "1400px" }}
         >
           {books.map((book, index) => {
             const isOpen = index === activeIndex;
             const reserveExpand = rowEndIndices.has(index);
+            const slotWidth = reserveExpand ? COVER_WIDTH : book.spineWidth;
+            const shouldShift =
+              expandShift > 0 &&
+              activeRow !== null &&
+              index > activeIndex &&
+              index <= activeRow.end;
             return (
               <div
                 key={book.id}
                 data-book-id={book.id}
                 data-book-index={index}
-                className="shrink-0"
+                className={`book-slot-motion shrink-0 overflow-visible${shouldShift ? " is-shifted" : ""}`}
                 style={{
-                  zIndex: isOpen ? 10 : 1,
-                  width: reserveExpand ? `${COVER_WIDTH}px` : undefined,
+                  zIndex: isOpen ? 20 : shouldShift ? 2 : 1,
+                  width: `${slotWidth}px`,
+                  transform: shouldShift ? `translateX(${expandShift}px)` : undefined,
+                  transitionDelay:
+                    shouldShift && activeIndex >= 0
+                      ? `${(index - activeIndex - 1) * 36}ms`
+                      : undefined,
                 }}
               >
                 <BookSpine

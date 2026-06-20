@@ -49,8 +49,8 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). On a fresh shelf, **12 sample
-PDFs load automatically** so you can try the app immediately. You can also drag
+Open [http://localhost:3000](http://localhost:3000). On a fresh shelf, **24 sample
+PDFs load automatically** (two rows) so you can try the app immediately. You can also drag
 your own PDFs anywhere onto the page, or click **Add a book**.
 
 ### Sample PDFs

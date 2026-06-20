@@ -14,9 +14,10 @@ interface RotatingQuote {
 
 interface QuoteSectionProps {
   books: BookMeta[];
+  className?: string;
 }
 
-export function QuoteSection({ books }: QuoteSectionProps) {
+export function QuoteSection({ books, className = "" }: QuoteSectionProps) {
   const quotes = useMemo<RotatingQuote[]>(() => {
     const all: RotatingQuote[] = [];
     for (const book of books) {
@@ -56,26 +57,24 @@ export function QuoteSection({ books }: QuoteSectionProps) {
   const current = quotes[index];
 
   return (
-    <section className="max-w-xl" aria-live="polite">
-      <h2 className="label-hand mb-3 text-2xl lowercase">quote</h2>
-
+    <section className={className} aria-live="polite">
       {!current ? (
-        <p className="text-[15px] leading-relaxed text-white/40">
-          Add a PDF to the shelf and lines from your books will appear here.
+        <p className="text-sm leading-relaxed text-white/35 sm:text-[15px]">
+          Lines from your books will appear here.
         </p>
       ) : (
-        <div className="quote-stage relative">
+        <div className="quote-stage-compact relative">
           <figure
             key={`${index}-${current.text.slice(0, 24)}`}
             className={phase === "enter" ? "quote-enter" : "quote-exit"}
           >
-            <blockquote className="line-clamp-4 text-[15px] leading-relaxed text-white/80">
+            <blockquote className="line-clamp-3 text-sm leading-relaxed text-white/75 sm:text-[15px]">
               “{current.text}”
             </blockquote>
-            <figcaption className="mt-3 truncate text-sm text-white/45">
+            <figcaption className="mt-2 truncate text-xs text-white/40 sm:text-sm">
               {current.bookTitle}
               {current.author ? (
-                <span className="text-white/30"> · {current.author}</span>
+                <span className="text-white/28"> · {current.author}</span>
               ) : null}
             </figcaption>
           </figure>

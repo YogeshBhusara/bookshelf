@@ -46,3 +46,20 @@ export function computeRowEndIndices(
 
   return rowEnd;
 }
+
+/** Row bounds for a book index, derived from row-end markers. */
+export function getRowRange(
+  index: number,
+  rowEndIndices: Set<number>,
+  bookCount: number,
+): { start: number; end: number } {
+  const ends = [...rowEndIndices].sort((a, b) => a - b);
+  for (let i = 0; i < ends.length; i++) {
+    const end = ends[i];
+    const start = i === 0 ? 0 : ends[i - 1] + 1;
+    if (index >= start && index <= end) {
+      return { start, end };
+    }
+  }
+  return { start: 0, end: Math.max(0, bookCount - 1) };
+}

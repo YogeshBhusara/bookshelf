@@ -26,7 +26,6 @@ function BookSpineComponent({
   onNeedCover,
 }: BookSpineProps) {
   const spineWidth = book.spineWidth;
-  const footprint = isOpen ? COVER_WIDTH : spineWidth;
 
   useEffect(() => {
     if (isOpen && !coverDataUrl) onNeedCover();
@@ -38,11 +37,12 @@ function BookSpineComponent({
 
   return (
     <div
-      className={`book group relative shrink-0 outline-none book-motion${isOpen ? " is-open" : ""}`}
+      className={`book group relative shrink-0 overflow-visible outline-none${isOpen ? " is-open" : ""}`}
       style={{
-        width: `${footprint}px`,
+        width: `${spineWidth}px`,
         height: `${SHELF_HEIGHT}px`,
         perspective: "1200px",
+        zIndex: isOpen ? 20 : 1,
       }}
       role="button"
       tabIndex={0}

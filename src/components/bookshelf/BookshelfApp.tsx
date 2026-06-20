@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { fetchSamplePdfFiles } from "@/lib/load-samples";
+import { fetchMissingSamplePdfFiles, fetchSamplePdfFiles } from "@/lib/load-samples";
 import { useBookStore } from "@/store/useBookStore";
 import { Bookshelf } from "./Bookshelf";
+import { AddBookButton } from "./AddBookButton";
 import { DropOverlay } from "./DropOverlay";
 import { QuoteSection } from "./QuoteSection";
 import { ImportProgressBar } from "./ImportProgressBar";
@@ -19,6 +20,7 @@ export function BookshelfApp() {
   const readingId = useBookStore((s) => s.readingId);
   const loadBooks = useBookStore((s) => s.loadBooks);
   const addBooks = useBookStore((s) => s.addBooks);
+  const importProgress = useBookStore((s) => s.importProgress);
   const removeBook = useBookStore((s) => s.removeBook);
   const closeReader = useBookStore((s) => s.closeReader);
   const clearError = useBookStore((s) => s.clearError);
@@ -29,16 +31,23 @@ export function BookshelfApp() {
     void loadBooks();
   }, [loadBooks]);
 
-  // Seed the shelf with sample PDFs when empty (for local testing).
-  useEffect(() => {
-    if (!loaded || books.length > 0) {
-      if (books.length > 0) sampleSeedPromise = null;
-      return;
-    }
-    if (sampleSeedPromise) return;
+  const bookTitlesKey = useMemo(
+    () => books.map((b) => b.title).sort().join("\0"),
+    [books],
+  );
 
-    sampleSeedPromise = fetchSamplePdfFiles()
-      .then((files) => addBooks(files))
+  // Seed / top-up sample PDFs for local testing (two shelf rows).
+  useEffect(() => {
+    if (!loaded || sampleSeedPromise) return;
+
+    sampleSeedPromise = (books.length === 0
+      ? fetchSamplePdfFiles()
+      : fetchMissingSamplePdfFiles(books.map((b) => b.title))
+    )
+      .then((files) => (files.length ? addBooks(files) : undefined))
+      .then(() => {
+        sampleSeedPromise = null;
+      })
       .catch((e) => {
         sampleSeedPromise = null;
         useBookStore.setState({
@@ -46,7 +55,7 @@ export function BookshelfApp() {
             e instanceof Error ? e.message : "Failed to load default sample PDFs.",
         });
       });
-  }, [loaded, books.length, addBooks]);
+  }, [loaded, books.length, bookTitlesKey, addBooks]);
 
   // Auto-dismiss the error toast.
   useEffect(() => {
@@ -65,13 +74,11 @@ export function BookshelfApp() {
   );
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-6 py-16 sm:px-8 sm:py-24">
+    <main className="mx-auto min-h-screen w-full max-w-5xl px-6 py-8 sm:px-8 sm:py-12">
       <ImportProgressBar />
-      {/* Header — minimal, lowercase, in the spirit of grizz.fyi */}
-      <header className="mb-14">
-        <div className="mb-6 h-9 w-9">
-          {/* simple shelf mark */}
-          <svg viewBox="0 0 36 36" fill="none" className="h-full w-full">
+      <header className="mb-10 grid min-h-[5.5rem] grid-cols-[auto_min(50vw,50%)] items-start gap-6 py-2 sm:mb-12 sm:gap-10 sm:min-h-[6.25rem] sm:py-3">
+        <div className="shrink-0 justify-self-start" aria-hidden>
+          <svg viewBox="0 0 36 36" fill="none" className="h-9 w-9 sm:h-10 sm:w-10">
             <rect x="6" y="6" width="5" height="24" rx="1" fill="#ededed" />
             <rect x="13" y="9" width="5" height="21" rx="1" fill="#9ca3af" />
             <rect
@@ -85,12 +92,17 @@ export function BookshelfApp() {
             />
           </svg>
         </div>
-        <QuoteSection books={books} />
+        <QuoteSection books={books} className="w-full min-w-0 justify-self-end text-left sm:text-right" />
       </header>
 
       {/* Bookshelf section */}
       <section>
-        <h2 className="label-hand mb-5 text-2xl lowercase">bookshelf</h2>
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 className="label-hand text-2xl lowercase">bookshelf</h2>
+          {loaded ? (
+            <AddBookButton onFiles={addBooks} importProgress={importProgress} />
+          ) : null}
+        </div>
 
         {!loaded ? (
           <div className="flex h-[300px] items-center gap-3 text-white/40">

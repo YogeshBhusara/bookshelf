@@ -20,6 +20,27 @@ export async function fetchSampleManifest(): Promise<SampleManifest> {
   return (await res.json()) as SampleManifest;
 }
 
+/** Fetch sample PDFs not already on the shelf (matched by title). */
+export async function fetchMissingSamplePdfFiles(
+  existingTitles: Iterable<string>,
+): Promise<File[]> {
+  const onShelf = new Set(existingTitles);
+  const { books } = await fetchSampleManifest();
+  const files: File[] = [];
+
+  for (const book of books) {
+    if (onShelf.has(book.title)) continue;
+    const res = await fetch(`/samples/${book.file}`);
+    if (!res.ok) {
+      throw new Error(`Could not load sample PDF: ${book.file}`);
+    }
+    const buffer = await res.arrayBuffer();
+    files.push(new File([buffer], book.file, { type: "application/pdf" }));
+  }
+
+  return files;
+}
+
 /** Fetch all dummy PDFs listed in public/samples/manifest.json. */
 export async function fetchSamplePdfFiles(): Promise<File[]> {
   const { books } = await fetchSampleManifest();
