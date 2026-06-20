@@ -10,6 +10,7 @@ import { QuoteSection } from "./QuoteSection";
 import { ImportProgressBar } from "./ImportProgressBar";
 import { PdfReader } from "@/components/reader/PdfReader";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { AppFooter } from "./AppFooter";
 
 /** Dedupes sample seeding across Strict Mode remounts and in-flight requests. */
 let sampleSeedPromise: Promise<void> | null = null;
@@ -119,6 +120,8 @@ export function BookshelfApp() {
           <Bookshelf onRequestDelete={setPendingDelete} />
         )}
       </section>
+
+      {loaded ? <AppFooter /> : null}
 
       <DropOverlay onFiles={addBooks} />
 
