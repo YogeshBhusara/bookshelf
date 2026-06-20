@@ -12,21 +12,29 @@ locally in your browser; your files never leave the device.
 | Shelf | Pull a book out | Read |
 | --- | --- | --- |
 | ![Shelf with colored spines](docs/images/shelf-with-books.png) | ![Book pulled out with cover visible](docs/images/shelf-book-pulled-out.png) | ![Full-screen PDF reader](docs/images/reader.png) |
-| Drop PDFs onto the shelf — covers and spines are generated automatically | Click a spine to swing the cover forward | Click **Read** or the cover again to open the reader |
+| Sample books load automatically on first visit | Click a spine to swing the cover forward | Click **Read** or the cover to zoom into the reader |
 
-## How it works
+## Features
 
-- **3D shelf** — each book is a CSS 3D object. The cover/spine plane rotates
-  around its left edge (the binding): closed books sit at `rotateY(90deg)`
-  showing only the spine, the active book swings to `rotateY(0deg)` and its
-  footprint expands to the full cover width. This mirrors the grizz.fyi shelf.
-- **Covers & spines** — when you add a PDF, the first page is rendered to a
-  canvas (via `pdf.js`) and used as the cover. A dominant colour is sampled from
-  that page to generate a matching spine with the title set vertically.
-- **Reading** — clicking the pulled-out book opens a full-screen reader that
-  renders pages on demand with zoom, page navigation, and keyboard shortcuts.
-- **Storage** — book metadata and the PDF blobs are saved in **IndexedDB**, so
-  your shelf persists across reloads without any server.
+- **3D shelf** — each book is a CSS 3D object. Closed books show only the spine;
+  clicking swings the cover forward with a smooth pull-out animation.
+- **Covers & spines** — the first PDF page becomes the cover. A dominant colour
+  is sampled to generate a matching spine with the title set vertically.
+- **Reader** — full-screen PDF viewer with zoom, page navigation, and keyboard
+  shortcuts. Opens with a zoom-in effect; closing reverses the animation.
+- **Rotating quotes** — lines from your books crossfade in the header.
+- **Local-first** — metadata and PDF blobs live in **IndexedDB**. Nothing is
+  uploaded to a server.
+
+## Interaction
+
+| Action | Result |
+| --- | --- |
+| Click a spine | Pull the book out on the shelf |
+| Click again / **Read** | Open the full-screen reader |
+| Click outside the shelf | Close the pulled-out book |
+| `Esc` (shelf) | Close the pulled-out book |
+| `Esc` (reader) | Close the reader |
 
 ## Stack
 
@@ -41,17 +49,17 @@ npm install
 npm run dev
 ```
 
-Open the app, then drag a PDF anywhere onto the page (or click **Add a book**).
+Open [http://localhost:3000](http://localhost:3000). On a fresh shelf, **12 sample
+PDFs load automatically** so you can try the app immediately. You can also drag
+your own PDFs anywhere onto the page, or click **Add a book**.
 
-### Try it with samples
+### Sample PDFs
 
-A few sample PDFs are generated into `public/samples`. Regenerate them with:
+Dummy books live in `public/samples/`. Regenerate them with:
 
 ```bash
-node scripts/make-samples.mjs
+npm run samples
 ```
-
-Then drag any file from `public/samples` onto the shelf.
 
 ### Refresh screenshots
 
@@ -64,21 +72,25 @@ npm run screenshots
 
 ## Keyboard shortcuts (reader)
 
-| Key            | Action          |
-| -------------- | --------------- |
-| `←` / `→`      | Previous / next |
-| `+` / `-`      | Zoom in / out   |
-| `Esc`          | Close the book  |
+| Key | Action |
+| --- | --- |
+| `←` / `→` | Previous / next page |
+| `+` / `-` | Zoom in / out |
+| `Esc` | Close the reader |
 
 ## Project structure
 
 ```
 src/
-├── app/                  # routes, layout, theme
+├── app/                  # routes, layout, theme, motion CSS
 ├── components/
-│   ├── bookshelf/        # 3D shelf, books, add tile, drop overlay
+│   ├── bookshelf/        # 3D shelf, books, drop overlay, quotes
 │   └── reader/           # full-screen PDF reader
 ├── lib/                  # IndexedDB, pdf.js processing, colour sampling
 ├── store/                # Zustand store
 └── types/                # shared types
 ```
+
+## License
+
+MIT

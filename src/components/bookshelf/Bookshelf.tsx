@@ -67,17 +67,6 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     return () => observer.disconnect();
   }, [books]);
 
-  // Scroll the active book into view.
-  useEffect(() => {
-    if (activeIndex < 0) return;
-    const book = books[activeIndex];
-    if (!book || !gridRef.current) return;
-    const el = gridRef.current.querySelector<HTMLElement>(
-      `[data-book-id="${book.id}"]`,
-    );
-    el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-  }, [activeIndex, books]);
-
   // Close the pulled-out book when clicking outside the shelf or pressing Escape.
   useEffect(() => {
     if (activeIndex < 0) return;
@@ -118,7 +107,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
         <div
           ref={gridRef}
           className="flex flex-wrap items-end gap-x-0.5 gap-y-8 pb-2"
-          style={{ minHeight: `${SHELF_HEIGHT}px` }}
+          style={{ minHeight: `${SHELF_HEIGHT}px`, perspective: "1400px" }}
         >
           {books.map((book, index) => {
             const isOpen = index === activeIndex;

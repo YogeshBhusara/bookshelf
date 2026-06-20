@@ -8,6 +8,7 @@ import {
   type PdfLoadingTask,
 } from "@/lib/pdf";
 import { useBookStore } from "@/store/useBookStore";
+import { READER_CLOSE_MS } from "@/components/bookshelf/motion";
 import type { BookMeta } from "@/types/book";
 
 interface PdfReaderProps {
@@ -26,12 +27,14 @@ export function PdfReader({ book, onClose }: PdfReaderProps) {
   const renderTaskRef = useRef<{ cancel: () => void } | null>(null);
   const pageRef = useRef(1);
   const zoomRef = useRef(1);
+  const closingRef = useRef(false);
 
   const [page, setPage] = useState(1);
   const [zoom, setZoom] = useState(1);
   const [loading, setLoading] = useState(true);
   const [resumed, setResumed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [closing, setClosing] = useState(false);
   const totalPages = book.pageCount;
 
   pageRef.current = page;
@@ -162,10 +165,20 @@ export function PdfReader({ book, onClose }: PdfReaderProps) {
     [totalPages],
   );
 
-  const handleClose = useCallback(() => {
-    persistProgress(page, zoom);
-    onClose();
-  }, [onClose, page, zoom, persistProgress]);
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+    persistProgress(pageRef.current, zoomRef.current);
+    setClosing(true);
+  }, [persistProgress]);
+
+  useEffect(() => {
+    if (!closing) return;
+    const timer = window.setTimeout(onClose, READER_CLOSE_MS);
+    return () => window.clearTimeout(timer);
+  }, [closing, onClose]);
+
+  const handleClose = requestClose;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -188,7 +201,16 @@ export function PdfReader({ book, onClose }: PdfReaderProps) {
   }, [page, zoom, loading, error, renderPage]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-sm animate-fade-in">
+    <div
+      className={`reader-backdrop fixed inset-0 z-50 ${
+        closing ? "reader-backdrop-out" : "reader-backdrop-in"
+      }`}
+    >
+      <div
+        className={`reader-panel flex h-full flex-col ${
+          closing ? "reader-zoom-out" : "reader-zoom-in"
+        }`}
+      >
       <header className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-white">{book.title}</p>
@@ -239,7 +261,7 @@ export function PdfReader({ book, onClose }: PdfReaderProps) {
           ) : (
             <canvas
               ref={canvasRef}
-              className="rounded-sm shadow-2xl shadow-black/60"
+              className="reader-page rounded-sm shadow-2xl shadow-black/60"
             />
           )}
         </div>
@@ -281,6 +303,7 @@ export function PdfReader({ book, onClose }: PdfReaderProps) {
           </IconButton>
         </footer>
       ) : null}
+      </div>
     </div>
   );
 }

@@ -33,17 +33,16 @@ function BookSpineComponent({
   }, [isOpen, coverDataUrl, onNeedCover]);
 
   const innerTransform = isOpen
-    ? "translateX(0px) rotate(0deg) rotateY(0deg)"
-    : `translateX(${(spineWidth * 0.18).toFixed(2)}px) rotate(${book.lean}deg) rotateY(90deg)`;
+    ? "translate3d(0px, -6px, 18px) rotate(0deg) rotateY(0deg) scale(1.018)"
+    : `translate3d(${(spineWidth * 0.18).toFixed(2)}px, 0px, 0px) rotate(${book.lean}deg) rotateY(90deg) scale(1)`;
 
   return (
     <div
-      className="book group relative shrink-0 outline-none"
+      className={`book group relative shrink-0 outline-none book-motion${isOpen ? " is-open" : ""}`}
       style={{
         width: `${footprint}px`,
         height: `${SHELF_HEIGHT}px`,
-        zIndex: isOpen ? 10 : 1,
-        transition: "width 600ms cubic-bezier(0.22, 1, 0.36, 1)",
+        perspective: "1200px",
       }}
       role="button"
       tabIndex={0}
@@ -60,26 +59,27 @@ function BookSpineComponent({
       }}
     >
       <div
-        className="book-inner relative"
+        className="book-inner book-inner-motion relative"
         style={{
           width: `${COVER_WIDTH}px`,
           height: `${SHELF_HEIGHT}px`,
           transformStyle: "preserve-3d",
           transformOrigin: "left center",
           transform: innerTransform,
-          transition: "transform 600ms cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <div
-          className="absolute left-0 top-0 overflow-hidden rounded-r-[3px] rounded-l-[1px]"
+          className="book-cover-motion absolute left-0 top-0 overflow-hidden rounded-r-[3px] rounded-l-[1px]"
           style={{
             width: `${COVER_WIDTH}px`,
             height: `${SHELF_HEIGHT}px`,
-            transform: `translateZ(${spineWidth}px)`,
+            transform: isOpen
+              ? `translateZ(${spineWidth + 2}px)`
+              : `translateZ(${spineWidth}px)`,
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
             boxShadow: isOpen
-              ? "0 30px 60px -20px rgba(0,0,0,0.7)"
+              ? "0 40px 80px -24px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.06)"
               : "0 12px 30px -18px rgba(0,0,0,0.6)",
             background: coverDataUrl ? undefined : book.spineColor,
           }}
@@ -107,8 +107,12 @@ function BookSpineComponent({
           />
 
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between p-3 transition-opacity duration-300"
-            style={{ opacity: isOpen ? 1 : 0 }}
+            className="book-actions-motion pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between p-3"
+            style={{
+              opacity: isOpen ? 1 : 0,
+              pointerEvents: isOpen ? "auto" : "none",
+              transform: isOpen ? "translateY(0)" : "translateY(6px)",
+            }}
           >
             <span className="pointer-events-auto rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-black backdrop-blur">
               {resumePage && resumePage > 1 ? `Resume p.${resumePage}` : "Read"}

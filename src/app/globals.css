@@ -5,6 +5,13 @@
   --foreground: #ededed;
   --muted: #6b7280;
   --line: rgba(255, 255, 255, 0.08);
+
+  /* Motion */
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft-out: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-snap-open: cubic-bezier(0.34, 1.15, 0.64, 1);
+  --book-open: 920ms;
+  --book-close: 760ms;
 }
 
 @theme inline {
@@ -58,4 +65,179 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.4s ease both;
+}
+
+/* Quote rotation — fixed layout, no page shift */
+.quote-stage {
+  min-height: 8.75rem;
+}
+
+@keyframes quote-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes quote-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.99);
+    filter: blur(4px);
+  }
+}
+
+.quote-enter {
+  animation: quote-enter 0.72s var(--ease-smooth) both;
+}
+
+.quote-exit {
+  animation: quote-exit 0.52s var(--ease-soft-out) both;
+}
+
+/* Book pull-out / close on the shelf */
+.book-motion {
+  transition: width var(--book-close) var(--ease-smooth);
+}
+
+.book-motion.is-open {
+  transition: width var(--book-open) var(--ease-smooth) 90ms;
+}
+
+.book-inner-motion {
+  transition: transform var(--book-close) var(--ease-smooth);
+}
+
+.book-motion.is-open .book-inner-motion {
+  transition: transform var(--book-open) var(--ease-snap-open) 60ms;
+}
+
+.book-cover-motion {
+  transition:
+    box-shadow var(--book-close) var(--ease-smooth),
+    transform var(--book-close) var(--ease-smooth);
+}
+
+.book-motion.is-open .book-cover-motion {
+  transition:
+    box-shadow var(--book-open) var(--ease-smooth) 120ms,
+    transform var(--book-open) var(--ease-smooth) 120ms;
+}
+
+.book-actions-motion {
+  transform: translateY(6px);
+  transition:
+    opacity 560ms var(--ease-smooth) 180ms,
+    transform 560ms var(--ease-smooth) 180ms;
+}
+
+/* Full-screen reader — backdrop + panel zoom */
+.reader-backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+}
+
+.reader-backdrop-in {
+  animation: reader-backdrop-in 780ms var(--ease-smooth) both;
+}
+
+.reader-backdrop-out {
+  animation: reader-backdrop-out 680ms var(--ease-soft-out) both;
+  pointer-events: none;
+}
+
+.reader-panel {
+  transform-origin: center 42%;
+  will-change: transform, opacity, filter;
+}
+
+.reader-zoom-in {
+  animation: reader-zoom-in 780ms var(--ease-smooth) both;
+}
+
+.reader-zoom-out {
+  animation: reader-zoom-out 680ms var(--ease-soft-out) both;
+}
+
+@keyframes reader-backdrop-in {
+  from {
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+}
+
+@keyframes reader-backdrop-out {
+  from {
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  to {
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+}
+
+@keyframes reader-zoom-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.82) translateY(24px);
+    filter: blur(8px);
+  }
+  55% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@keyframes reader-zoom-out {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.86) translateY(18px);
+    filter: blur(6px);
+  }
+}
+
+.reader-page {
+  animation: reader-page-in 680ms var(--ease-smooth) 120ms both;
+}
+
+@keyframes reader-page-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

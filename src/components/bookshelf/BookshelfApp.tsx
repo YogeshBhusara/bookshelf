@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { fetchSamplePdfFiles } from "@/lib/load-samples";
 import { useBookStore } from "@/store/useBookStore";
 import { Bookshelf } from "./Bookshelf";
 import { DropOverlay } from "./DropOverlay";
 import { QuoteSection } from "./QuoteSection";
 import { ImportProgressBar } from "./ImportProgressBar";
 import { PdfReader } from "@/components/reader/PdfReader";
+
+/** Dedupes sample seeding across Strict Mode remounts and in-flight requests. */
+let sampleSeedPromise: Promise<void> | null = null;
 
 export function BookshelfApp() {
   const books = useBookStore((s) => s.books);
@@ -24,6 +28,25 @@ export function BookshelfApp() {
   useEffect(() => {
     void loadBooks();
   }, [loadBooks]);
+
+  // Seed the shelf with sample PDFs when empty (for local testing).
+  useEffect(() => {
+    if (!loaded || books.length > 0) {
+      if (books.length > 0) sampleSeedPromise = null;
+      return;
+    }
+    if (sampleSeedPromise) return;
+
+    sampleSeedPromise = fetchSamplePdfFiles()
+      .then((files) => addBooks(files))
+      .catch((e) => {
+        sampleSeedPromise = null;
+        useBookStore.setState({
+          error:
+            e instanceof Error ? e.message : "Failed to load default sample PDFs.",
+        });
+      });
+  }, [loaded, books.length, addBooks]);
 
   // Auto-dismiss the error toast.
   useEffect(() => {
@@ -77,12 +100,6 @@ export function BookshelfApp() {
         ) : (
           <Bookshelf onRequestDelete={setPendingDelete} />
         )}
-
-        {loaded && books.length === 0 ? (
-          <p className="mt-6 text-sm text-white/40">
-            The shelf is empty. Add your first PDF to get started.
-          </p>
-        ) : null}
       </section>
 
       <DropOverlay onFiles={addBooks} />
