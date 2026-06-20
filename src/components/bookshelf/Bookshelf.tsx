@@ -64,15 +64,15 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     return () => observer.disconnect();
   }, [books]);
 
-  // Close the pulled-out book when clicking outside the shelf or pressing Escape.
+  // Close the pulled-out book when clicking outside any book, or pressing Escape.
   useEffect(() => {
     if (activeIndex < 0) return;
 
     const onPointerDown = (event: PointerEvent) => {
-      const grid = gridRef.current;
-      if (!grid?.contains(event.target as Node)) {
-        setActiveIndex(-1);
-      }
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("[data-book-id]")) return;
+      setActiveIndex(-1);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
@@ -100,7 +100,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     <div className="relative">
       <div>
         {totalCount > 0 ? (
-          <p className="mb-4 text-xs text-white/35">
+          <p className="mb-4 text-xs text-subtle">
             {books.length}
             {hasMore ? "+" : ""} of {totalCount} book{totalCount === 1 ? "" : "s"}
             {loadingMore ? " · loading more…" : ""}
@@ -161,8 +161,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
         <div
           className="h-3 w-full"
           style={{
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0))",
+            background: "var(--shelf-sheen)",
           }}
         />
       </div>

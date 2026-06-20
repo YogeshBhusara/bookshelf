@@ -34,6 +34,19 @@ export async function loadPdfDocument(blob: Blob) {
 
 export type PdfLoadingTask = Awaited<ReturnType<typeof loadPdfDocument>>;
 export type PdfDocument = Awaited<PdfLoadingTask["promise"]>;
+export type PdfPage = Awaited<ReturnType<PdfDocument["getPage"]>>;
+
+let textLayerClassPromise: Promise<typeof import("pdfjs-dist").TextLayer> | null =
+  null;
+
+export async function getTextLayerClass() {
+  if (!textLayerClassPromise) {
+    textLayerClassPromise = getPdfJs().then(
+      (lib) => lib.TextLayer as typeof import("pdfjs-dist").TextLayer,
+    );
+  }
+  return textLayerClassPromise;
+}
 
 export interface ProcessPdfOptions {
   /** Skip quote mining during import — fills in later via enrichBookQuotes(). */

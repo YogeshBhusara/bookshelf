@@ -34,10 +34,15 @@ export interface LegacyBookMeta extends BookMeta {
   coverDataUrl?: string;
 }
 
+import type { FitMode } from "@/types/reader";
+
 /** Saved reading position — restored when reopening a book. */
 export interface ReadingProgress {
   bookId: string;
   page: number;
   zoom: number;
+  fitMode?: FitMode;
+  twoPage?: boolean;
+  rotation?: number;
   updatedAt: number;
 }

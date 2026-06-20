@@ -52,10 +52,10 @@ export function DropOverlay({ onFiles }: DropOverlayProps) {
   if (!active) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="rounded-2xl border-2 border-dashed border-white/30 px-12 py-10 text-center">
-        <p className="label-hand text-3xl text-white">drop it on the shelf</p>
-        <p className="mt-1 text-sm text-white/50">Release to add your PDF</p>
+    <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-overlay backdrop-blur-sm">
+      <div className="rounded-2xl border-2 border-dashed border-strong px-12 py-10 text-center">
+        <p className="label-hand text-3xl text-foreground">drop it on the shelf</p>
+        <p className="mt-1 text-sm text-subtle">Release to add your PDF</p>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect } from "react";
+import { memo, useEffect, type CSSProperties } from "react";
 import type { BookMeta } from "@/types/book";
 import { COVER_WIDTH, SHELF_HEIGHT } from "./constants";
 
@@ -31,9 +31,14 @@ function BookSpineComponent({
     if (isOpen && !coverDataUrl) onNeedCover();
   }, [isOpen, coverDataUrl, onNeedCover]);
 
-  const innerTransform = isOpen
-    ? "translate3d(0px, -6px, 18px) rotate(0deg) rotateY(0deg) scale(1.018)"
-    : `translate3d(${(spineWidth * 0.18).toFixed(2)}px, 0px, 0px) rotate(${book.lean}deg) rotateY(90deg) scale(1)`;
+  const innerStyle: CSSProperties = {
+    width: `${COVER_WIDTH}px`,
+    height: `${SHELF_HEIGHT}px`,
+    transformStyle: "preserve-3d",
+    transformOrigin: "left center",
+    ["--spine-inset" as string]: `${(spineWidth * 0.18).toFixed(2)}px`,
+    ["--lean" as string]: `${book.lean}deg`,
+  };
 
   return (
     <div
@@ -60,13 +65,8 @@ function BookSpineComponent({
     >
       <div
         className="book-inner book-inner-motion relative"
-        style={{
-          width: `${COVER_WIDTH}px`,
-          height: `${SHELF_HEIGHT}px`,
-          transformStyle: "preserve-3d",
-          transformOrigin: "left center",
-          transform: innerTransform,
-        }}
+        data-state={isOpen ? "open" : "closed"}
+        style={innerStyle}
       >
         <div
           className="book-cover-motion absolute left-0 top-0 overflow-hidden rounded-r-[3px] rounded-l-[1px]"
@@ -78,9 +78,7 @@ function BookSpineComponent({
               : `translateZ(${spineWidth}px)`,
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",
-            boxShadow: isOpen
-              ? "0 40px 80px -24px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.06)"
-              : "0 12px 30px -18px rgba(0,0,0,0.6)",
+            boxShadow: isOpen ? "var(--book-shadow-open)" : "var(--book-shadow-closed)",
             background: coverDataUrl ? undefined : book.spineColor,
           }}
         >
@@ -94,7 +92,7 @@ function BookSpineComponent({
             />
           ) : isOpen ? (
             <div className="flex h-full w-full items-center justify-center">
-              <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-white/70" />
+              <span className="spinner h-5 w-5 animate-spin rounded-full border-2" />
             </div>
           ) : null}
 

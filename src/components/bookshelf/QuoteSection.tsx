@@ -59,7 +59,7 @@ export function QuoteSection({ books, className = "" }: QuoteSectionProps) {
   return (
     <section className={className} aria-live="polite">
       {!current ? (
-        <p className="text-sm leading-relaxed text-white/35 sm:text-[15px]">
+        <p className="text-sm leading-relaxed text-subtle sm:text-[15px]">
           Lines from your books will appear here.
         </p>
       ) : (
@@ -68,13 +68,13 @@ export function QuoteSection({ books, className = "" }: QuoteSectionProps) {
             key={`${index}-${current.text.slice(0, 24)}`}
             className={phase === "enter" ? "quote-enter" : "quote-exit"}
           >
-            <blockquote className="line-clamp-3 text-sm leading-relaxed text-white/75 sm:text-[15px]">
+            <blockquote className="line-clamp-3 text-sm leading-relaxed text-foreground/80 sm:text-[15px]">
               “{current.text}”
             </blockquote>
-            <figcaption className="mt-2 truncate text-xs text-white/40 sm:text-sm">
+            <figcaption className="mt-2 truncate text-xs text-subtle sm:text-sm">
               {current.bookTitle}
               {current.author ? (
-                <span className="text-white/28"> · {current.author}</span>
+                <span className="text-faint"> · {current.author}</span>
               ) : null}
             </figcaption>
           </figure>

@@ -16,15 +16,37 @@ locally in your browser; your files never leave the device.
 
 ## Features
 
+### Shelf
+
 - **3D shelf** — each book is a CSS 3D object. Closed books show only the spine;
   clicking swings the cover forward with a smooth pull-out animation.
 - **Covers & spines** — the first PDF page becomes the cover. A dominant colour
   is sampled to generate a matching spine with the title set vertically.
-- **Reader** — full-screen PDF viewer with zoom, page navigation, and keyboard
-  shortcuts. Opens with a zoom-in effect; closing reverses the animation.
 - **Rotating quotes** — lines from your books crossfade in the header.
-- **Local-first** — metadata and PDF blobs live in **IndexedDB**. Nothing is
-  uploaded to a server.
+- **Drag & drop** — drop PDFs anywhere on the page, or use **Add a book**.
+- **Sample library** — 24 sample PDFs load automatically on first visit.
+- **Dark / light theme** — toggle in the header; preference is remembered.
+
+### PDF reader
+
+Full-screen reader built on **pdf.js** with canvas rendering and a selectable text layer.
+
+- **Navigation** — previous/next page, go-to-page input, edge click zones, touch swipe
+- **Zoom & fit** — 50%–300% zoom; fit height, fit width, or fit page
+- **Two-page spread** — facing pages for a book-like layout
+- **Rotation** — rotate the current page 90° clockwise
+- **Search** — find in document with match count and next/previous result
+- **Sidebar** — table of contents (PDF outline), page thumbnails, bookmarks
+- **Bookmarks** — save named bookmarks per book; stored in IndexedDB
+- **Presentation mode** — hide chrome for a clean reading view
+- **Fullscreen** — native fullscreen API
+- **Download & print** — save or print the original PDF
+- **Progress** — page, zoom, fit mode, spread, and rotation are restored when you reopen a book
+
+### Local-first storage
+
+Metadata, covers, PDF blobs, reading progress, and bookmarks live in **IndexedDB**.
+Nothing is uploaded to a server.
 
 ## Interaction
 
@@ -34,7 +56,7 @@ locally in your browser; your files never leave the device.
 | Click again / **Read** | Open the full-screen reader |
 | Click outside the shelf | Close the pulled-out book |
 | `Esc` (shelf) | Close the pulled-out book |
-| `Esc` (reader) | Close the reader |
+| `Esc` (reader) | Close search → sidebar → presentation → reader |
 
 ## Stack
 
@@ -74,9 +96,18 @@ npm run screenshots
 
 | Key | Action |
 | --- | --- |
-| `←` / `→` | Previous / next page |
+| `←` / `→`, `PageUp` / `PageDown` | Previous / next page |
+| `Home` / `End` | First / last page |
 | `+` / `-` | Zoom in / out |
-| `Esc` | Close the reader |
+| `Ctrl/Cmd+F` | Find in document |
+| `g` | Go to page |
+| `b` | Bookmark current page |
+| `s` | Toggle table of contents |
+| `1` / `2` / `3` | Fit height / width / page |
+| `p` | Presentation mode |
+| `f` | Fullscreen |
+| `r` | Rotate clockwise |
+| `Esc` | Close search → sidebar → presentation → reader |
 
 ## Project structure
 
@@ -85,9 +116,12 @@ src/
 ├── app/                  # routes, layout, theme, motion CSS
 ├── components/
 │   ├── bookshelf/        # 3D shelf, books, drop overlay, quotes
-│   └── reader/           # full-screen PDF reader
-├── lib/                  # IndexedDB, pdf.js processing, colour sampling
-├── store/                # Zustand store
+│   └── reader/           # PDF reader UI (toolbar, sidebar, search, page view)
+├── lib/
+│   ├── reader/           # viewport math, search, outline parsing
+│   ├── db.ts             # IndexedDB (books, files, progress, bookmarks)
+│   └── pdf.ts            # pdf.js loading and import pipeline
+├── store/                # Zustand stores (books, theme)
 └── types/                # shared types
 ```
 

@@ -9,6 +9,7 @@ import { DropOverlay } from "./DropOverlay";
 import { QuoteSection } from "./QuoteSection";
 import { ImportProgressBar } from "./ImportProgressBar";
 import { PdfReader } from "@/components/reader/PdfReader";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /** Dedupes sample seeding across Strict Mode remounts and in-flight requests. */
 let sampleSeedPromise: Promise<void> | null = null;
@@ -79,15 +80,15 @@ export function BookshelfApp() {
       <header className="mb-10 grid min-h-[5.5rem] grid-cols-[auto_min(50vw,50%)] items-start gap-6 py-2 sm:mb-12 sm:gap-10 sm:min-h-[6.25rem] sm:py-3">
         <div className="shrink-0 justify-self-start" aria-hidden>
           <svg viewBox="0 0 36 36" fill="none" className="h-9 w-9 sm:h-10 sm:w-10">
-            <rect x="6" y="6" width="5" height="24" rx="1" fill="#ededed" />
-            <rect x="13" y="9" width="5" height="21" rx="1" fill="#9ca3af" />
+            <rect x="6" y="6" width="5" height="24" rx="1" fill="var(--logo-primary)" />
+            <rect x="13" y="9" width="5" height="21" rx="1" fill="var(--logo-muted)" />
             <rect
               x="20"
               y="6"
               width="5"
               height="24"
               rx="1"
-              fill="#ededed"
+              fill="var(--logo-primary)"
               transform="rotate(8 22.5 18)"
             />
           </svg>
@@ -100,13 +101,16 @@ export function BookshelfApp() {
         <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="label-hand text-2xl lowercase">bookshelf</h2>
           {loaded ? (
-            <AddBookButton onFiles={addBooks} importProgress={importProgress} />
+            <div className="flex shrink-0 items-center gap-2">
+              <AddBookButton onFiles={addBooks} importProgress={importProgress} />
+              <ThemeToggle />
+            </div>
           ) : null}
         </div>
 
         {!loaded ? (
-          <div className="flex h-[300px] items-center gap-3 text-white/40">
-            <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-white/70" />
+          <div className="flex h-[300px] items-center gap-3 text-subtle">
+            <span className="spinner h-5 w-5 animate-spin rounded-full border-2" />
             <span className="text-sm">Loading your shelf…</span>
           </div>
         ) : (
@@ -123,10 +127,10 @@ export function BookshelfApp() {
 
       {/* Delete confirmation */}
       {bookToDelete ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6">
-            <h3 className="text-base font-medium text-white">Remove this book?</h3>
-            <p className="mt-2 text-sm text-white/50">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-overlay p-6 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm rounded-2xl border border-line bg-surface-elevated p-6">
+            <h3 className="text-base font-medium text-foreground">Remove this book?</h3>
+            <p className="mt-2 text-sm text-subtle">
               “{bookToDelete.title}” will be permanently removed from your shelf
               and this device.
             </p>
@@ -134,7 +138,7 @@ export function BookshelfApp() {
               <button
                 type="button"
                 onClick={() => setPendingDelete(null)}
-                className="rounded-full px-4 py-2 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+                className="rounded-full px-4 py-2 text-sm text-secondary transition hover:bg-control-hover hover:text-foreground"
               >
                 Cancel
               </button>
@@ -156,12 +160,12 @@ export function BookshelfApp() {
       {/* Error toast */}
       {error ? (
         <div className="fixed bottom-6 left-1/2 z-[70] max-w-lg -translate-x-1/2 animate-fade-in px-4">
-          <div className="flex items-start gap-3 rounded-2xl border border-red-500/30 bg-neutral-950 px-4 py-3 text-sm text-red-200 shadow-xl">
+          <div className="flex items-start gap-3 rounded-2xl border border-red-500/30 bg-surface-elevated px-4 py-3 text-sm text-red-600 shadow-xl dark:text-red-200">
             <span className="leading-relaxed">{error}</span>
             <button
               type="button"
               onClick={clearError}
-              className="text-red-200/60 transition hover:text-red-200"
+              className="text-red-600/60 transition hover:text-red-600 dark:text-red-200/60 dark:hover:text-red-200"
               aria-label="Dismiss"
             >
               ✕

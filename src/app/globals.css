@@ -1,10 +1,47 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #000000;
-  --foreground: #ededed;
-  --muted: #6b7280;
-  --line: rgba(255, 255, 255, 0.08);
+  color-scheme: light;
+
+  --paper-base: #ede6d8;
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+  --paper-texture:
+    radial-gradient(ellipse 140% 95% at 50% -18%, rgba(255, 252, 245, 0.26), transparent 68%),
+    radial-gradient(ellipse 110% 75% at 50% 108%, rgba(92, 68, 38, 0.028), transparent 62%),
+    var(--paper-grain);
+
+  --background: var(--paper-base);
+  --foreground: #1f1a14;
+  --muted: #6b6358;
+  --line: rgba(62, 48, 32, 0.1);
+  --strong: rgba(62, 48, 32, 0.16);
+  --secondary: rgba(31, 26, 20, 0.58);
+  --subtle: rgba(31, 26, 20, 0.42);
+  --faint: rgba(31, 26, 20, 0.28);
+  --surface: #f5efe4;
+  --surface-elevated: #faf6ef;
+  --overlay: rgba(28, 22, 16, 0.42);
+  --control: rgba(62, 48, 32, 0.05);
+  --control-hover: rgba(62, 48, 32, 0.09);
+  --spinner-track: rgba(62, 48, 32, 0.14);
+  --spinner-head: rgba(31, 26, 20, 0.62);
+  --logo-primary: #1f1a14;
+  --logo-muted: #8a8178;
+  --scrollbar-thumb: rgba(62, 48, 32, 0.16);
+  --shelf-sheen: linear-gradient(
+    180deg,
+    rgba(62, 48, 32, 0.06),
+    rgba(62, 48, 32, 0)
+  );
+  --book-shadow-closed: 0 12px 30px -18px rgba(62, 48, 32, 0.28);
+  --book-shadow-open: 0 40px 80px -24px rgba(62, 48, 32, 0.34),
+    0 0 0 1px rgba(62, 48, 32, 0.07);
+  --reader-backdrop: rgba(245, 239, 228, 0.94);
+  --reader-backdrop-end: rgba(237, 230, 216, 0.97);
+  --reader-chrome: rgba(250, 246, 239, 0.9);
+  --reader-page-shadow: 0 25px 50px -12px rgba(62, 48, 32, 0.24);
 
   /* Motion */
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
@@ -14,18 +51,73 @@
   --book-close: 760ms;
 }
 
+.dark {
+  color-scheme: dark;
+
+  --paper-base: #0c0b09;
+  --paper-texture:
+    radial-gradient(ellipse 130% 90% at 50% -8%, rgba(255, 255, 255, 0.016), transparent 72%),
+    radial-gradient(ellipse 115% 85% at 50% 105%, rgba(0, 0, 0, 0.28), transparent 72%);
+
+  --background: var(--paper-base);
+  --foreground: #e6dfd3;
+  --muted: #7a7368;
+  --line: rgba(230, 223, 211, 0.08);
+  --strong: rgba(230, 223, 211, 0.13);
+  --secondary: rgba(230, 223, 211, 0.58);
+  --subtle: rgba(230, 223, 211, 0.38);
+  --faint: rgba(230, 223, 211, 0.24);
+  --surface: #141210;
+  --surface-elevated: #1a1815;
+  --overlay: rgba(0, 0, 0, 0.74);
+  --control: rgba(230, 223, 211, 0.04);
+  --control-hover: rgba(230, 223, 211, 0.08);
+  --spinner-track: rgba(230, 223, 211, 0.12);
+  --spinner-head: rgba(230, 223, 211, 0.68);
+  --logo-primary: #e6dfd3;
+  --logo-muted: #7a7368;
+  --scrollbar-thumb: rgba(230, 223, 211, 0.12);
+  --shelf-sheen: linear-gradient(
+    180deg,
+    rgba(230, 223, 211, 0.03),
+    rgba(230, 223, 211, 0)
+  );
+  --book-shadow-closed: 0 12px 30px -18px rgba(0, 0, 0, 0.62);
+  --book-shadow-open: 0 40px 80px -24px rgba(0, 0, 0, 0.76),
+    0 0 0 1px rgba(230, 223, 211, 0.05);
+  --reader-backdrop: rgba(12, 11, 9, 0.94);
+  --reader-backdrop-end: rgba(12, 11, 9, 0.97);
+  --reader-chrome: rgba(18, 16, 13, 0.94);
+  --reader-page-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.62);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-strong: var(--strong);
+  --color-secondary: var(--secondary);
+  --color-subtle: var(--subtle);
+  --color-faint: var(--faint);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-overlay: var(--overlay);
+  --color-control: var(--control);
+  --color-control-hover: var(--control-hover);
   --font-sans: var(--font-inter);
   --font-hand: var(--font-caveat);
 }
 
 html,
 body {
-  background: var(--background);
+  background-color: var(--paper-base);
+  background-image: var(--paper-texture);
+  background-attachment: fixed;
+  background-size:
+    100% 100%,
+    100% 100%,
+    280px 280px;
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -45,7 +137,7 @@ body {
   width: 6px;
 }
 .thin-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
 }
 .thin-scroll::-webkit-scrollbar-track {
@@ -65,6 +157,11 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.4s ease both;
+}
+
+.spinner {
+  border-color: var(--spinner-track);
+  border-top-color: var(--spinner-head);
 }
 
 /* Quote rotation — fixed layout, no page shift */
@@ -121,6 +218,26 @@ body {
   z-index: 20;
 }
 
+.book-inner-motion[data-state="closed"] {
+  transform: translate3d(var(--spine-inset), 0, 0) rotate(var(--lean)) rotateY(90deg);
+}
+
+.book-inner-motion[data-state="open"] {
+  transform: translate3d(0, -6px, 18px) rotate(0deg) rotateY(0deg) scale(1.018);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .book:not(.is-open):hover {
+    z-index: 10;
+  }
+
+  .book:not(.is-open):hover .book-inner-motion[data-state="closed"] {
+    transform: translate3d(var(--spine-inset), -2px, 14px) rotate(var(--lean))
+      rotateY(76deg) scale(1.012);
+    transition: transform 260ms var(--ease-smooth);
+  }
+}
+
 /* Same-row neighbors slide aside when a book opens (transform only — no flex reflow). */
 .book-slot-motion {
   transition: transform var(--book-close) var(--ease-smooth);
@@ -159,9 +276,13 @@ body {
 
 /* Full-screen reader — backdrop + panel zoom */
 .reader-backdrop {
-  background: rgba(0, 0, 0, 0.72);
+  background: var(--reader-backdrop);
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
+}
+
+.reader-chrome {
+  background: var(--reader-chrome);
 }
 
 .reader-backdrop-in {
@@ -188,12 +309,12 @@ body {
 
 @keyframes reader-backdrop-in {
   from {
-    background: rgba(0, 0, 0, 0);
+    background: color-mix(in srgb, var(--reader-backdrop) 0%, transparent);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
   }
   to {
-    background: rgba(0, 0, 0, 0.88);
+    background: var(--reader-backdrop-end);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
@@ -201,12 +322,12 @@ body {
 
 @keyframes reader-backdrop-out {
   from {
-    background: rgba(0, 0, 0, 0.88);
+    background: var(--reader-backdrop-end);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
   to {
-    background: rgba(0, 0, 0, 0);
+    background: color-mix(in srgb, var(--reader-backdrop) 0%, transparent);
     backdrop-filter: blur(0px);
     -webkit-backdrop-filter: blur(0px);
   }
@@ -246,6 +367,30 @@ body {
   animation: reader-page-in 680ms var(--ease-smooth) 120ms both;
 }
 
+/* Theme toggle — ripple expand, theme swap under cover, layer dissolve */
+.theme-ripple-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 1;
+}
+
+.theme-ripple-backdrop {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.theme-ripple-circle {
+  position: fixed;
+  border-radius: 50%;
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+}
+
 @keyframes reader-page-in {
   from {
     opacity: 0;
@@ -254,5 +399,113 @@ body {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* PDF text layer — selectable text over canvas */
+.pdf-text-layer {
+  overflow: hidden;
+  line-height: 1;
+  opacity: 1;
+  user-select: text;
+  pointer-events: auto;
+}
+
+.pdf-text-layer span,
+.pdf-text-layer br {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  transform-origin: 0 0;
+  cursor: text;
+}
+
+.pdf-text-layer .pdf-search-hit {
+  background: rgba(250, 204, 21, 0.45);
+  border-radius: 2px;
+}
+
+.reader-presentation .reader-chrome {
+  background: transparent;
+}
+
+.reader-sidebar {
+  animation: reader-sidebar-in 240ms var(--ease-smooth) both;
+}
+
+@keyframes reader-sidebar-in {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.reader-turn-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.reader-turn-zone-left {
+  left: 0;
+}
+
+.reader-turn-zone-right {
+  right: 0;
+}
+
+.reader-turn-zone:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(62, 48, 32, 0.05),
+    transparent
+  );
+}
+
+.reader-turn-zone-right:hover {
+  background: linear-gradient(
+    270deg,
+    rgba(62, 48, 32, 0.05),
+    transparent
+  );
+}
+
+.dark .reader-turn-zone:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+}
+
+.dark .reader-turn-zone-right:hover {
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+}
+
+.reader-search {
+  animation: reader-search-in 200ms var(--ease-smooth) both;
+}
+
+@keyframes reader-search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

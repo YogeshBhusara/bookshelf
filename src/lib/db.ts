@@ -1,5 +1,6 @@
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
 import type { BookCover, BookFile, BookMeta, LegacyBookMeta, ReadingProgress } from "@/types/book";
+import type { BookBookmark } from "@/types/reader";
 import { isQuotaError, StorageQuotaError } from "@/lib/storage-errors";
 
 interface BookshelfDB extends DBSchema {
@@ -20,10 +21,15 @@ interface BookshelfDB extends DBSchema {
     key: string;
     value: ReadingProgress;
   };
+  bookmarks: {
+    key: string;
+    value: BookBookmark;
+    indexes: { "by-bookId": string };
+  };
 }
 
 const DB_NAME = "bookshelf";
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 export const METADATA_PAGE_SIZE = 30;
 
@@ -77,6 +83,10 @@ function getDB(): Promise<IDBPDatabase<BookshelfDB>> {
         }
         if (!db.objectStoreNames.contains("progress")) {
           db.createObjectStore("progress", { keyPath: "bookId" });
+        }
+        if (!db.objectStoreNames.contains("bookmarks")) {
+          const store = db.createObjectStore("bookmarks", { keyPath: "id" });
+          store.createIndex("by-bookId", "bookId");
         }
 
         void oldVersion;
@@ -166,7 +176,18 @@ export async function saveBook(
 
 export async function deleteBook(id: string): Promise<void> {
   const db = await getDB();
-  const tx = db.transaction(["books", "files", "covers", "progress"], "readwrite");
+  const tx = db.transaction(
+    ["books", "files", "covers", "progress", "bookmarks"],
+    "readwrite",
+  );
+  const bookmarkStore = tx.objectStore("bookmarks");
+  const bookmarkIndex = bookmarkStore.index("by-bookId");
+  let bookmarkCursor = await bookmarkIndex.openCursor(IDBKeyRange.only(id));
+  while (bookmarkCursor) {
+    await bookmarkCursor.delete();
+    bookmarkCursor = await bookmarkCursor.continue();
+  }
+
   await Promise.all([
     tx.objectStore("books").delete(id),
     tx.objectStore("files").delete(id),
@@ -212,6 +233,22 @@ export async function updateBookQuotes(
   const book = await db.get("books", id);
   if (!book) return;
   await db.put("books", { ...stripCover(book), quotes });
+}
+
+export async function getBookBookmarks(bookId: string): Promise<BookBookmark[]> {
+  const db = await getDB();
+  const bookmarks = await db.getAllFromIndex("bookmarks", "by-bookId", bookId);
+  return bookmarks.sort((a, b) => a.page - b.page || a.createdAt - b.createdAt);
+}
+
+export async function saveBookBookmark(bookmark: BookBookmark): Promise<void> {
+  const db = await getDB();
+  await db.put("bookmarks", bookmark);
+}
+
+export async function deleteBookBookmark(id: string): Promise<void> {
+  const db = await getDB();
+  await db.delete("bookmarks", id);
 }
 
 /** Rough storage estimate for UI warnings (metadata + covers + PDFs). */

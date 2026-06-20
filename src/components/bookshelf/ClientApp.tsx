@@ -10,8 +10,8 @@ const BookshelfApp = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex min-h-screen items-center justify-center text-white/40">
-        <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/20 border-t-white/70" />
+      <div className="flex min-h-screen items-center justify-center text-subtle">
+        <span className="spinner h-5 w-5 animate-spin rounded-full border-2" />
       </div>
     ),
   },

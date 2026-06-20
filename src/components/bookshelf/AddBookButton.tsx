@@ -20,12 +20,12 @@ export function AddBookButton({ onFiles, importProgress }: AddBookButtonProps) {
         onClick={() => inputRef.current?.click()}
         disabled={importing}
         title="Drop a PDF anywhere, or click to choose"
-        className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-xs text-white/55 transition hover:border-white/30 hover:bg-white/[0.08] hover:text-white/85 disabled:cursor-wait disabled:opacity-60"
+        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-control px-3 text-xs text-secondary transition hover:border-strong hover:bg-control-hover hover:text-foreground disabled:cursor-wait disabled:opacity-60"
       >
         {importing ? (
-          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/20 border-t-white/70" />
+          <span className="spinner h-3.5 w-3.5 animate-spin rounded-full border-2" />
         ) : (
-          <span className="text-sm font-light leading-none text-white/70">+</span>
+          <span className="text-sm font-light leading-none text-secondary">+</span>
         )}
         {importing ? "Adding…" : "Add a book"}
       </button>
