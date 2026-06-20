@@ -38,8 +38,10 @@ export function BookshelfApp() {
   );
 
   // Seed / top-up sample PDFs for local testing (two shelf rows).
+  // Skip when capturing README screenshots (?screenshots=1).
   useEffect(() => {
     if (!loaded || sampleSeedPromise) return;
+    if (new URLSearchParams(window.location.search).has("screenshots")) return;
 
     sampleSeedPromise = (books.length === 0
       ? fetchSamplePdfFiles()

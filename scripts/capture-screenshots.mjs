@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
 
 const BASE_URL = process.env.SCREENSHOT_URL ?? "http://localhost:3000";
+const SCREENSHOT_URL = `${BASE_URL}?screenshots=1`;
 const OUT_DIR = "docs/images";
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CHROME =
@@ -15,9 +16,20 @@ async function wait(ms) {
 }
 
 async function capture(page, name) {
-  const path = `${OUT_DIR}/${name}`;
-  await page.screenshot({ path, type: "png" });
-  console.log(`✓ ${path}`);
+  const filePath = `${OUT_DIR}/${name}`;
+  await page.screenshot({ path: filePath, type: "png" });
+  console.log(`✓ ${filePath}`);
+}
+
+async function clearBookshelfDb(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve, reject) => {
+      const request = indexedDB.deleteDatabase("bookshelf");
+      request.onsuccess = () => resolve(undefined);
+      request.onerror = () => reject(request.error);
+      request.onblocked = () => resolve(undefined);
+    });
+  });
 }
 
 async function uploadSamplePdfs(page) {
@@ -30,6 +42,18 @@ async function uploadSamplePdfs(page) {
   const input = await page.$('input[type="file"][accept*="pdf"]');
   if (!input) throw new Error("PDF file input not found.");
   await input.uploadFile(...samplePaths);
+}
+
+async function waitForBookCount(page, count) {
+  await page.waitForFunction(
+    (expected) => {
+      const label = document.body.textContent ?? "";
+      const match = label.match(/(\d+)\s+of\s+(\d+)\s+books/);
+      return match && Number(match[2]) >= expected;
+    },
+    { timeout: 120_000 },
+    count,
+  );
 }
 
 async function main() {
@@ -45,22 +69,22 @@ async function main() {
   const page = await browser.newPage();
 
   try {
-    await page.goto(BASE_URL, { waitUntil: "networkidle2", timeout: 60_000 });
-    await wait(800);
+    await page.goto(SCREENSHOT_URL, { waitUntil: "networkidle2", timeout: 60_000 });
+    await clearBookshelfDb(page);
+    await page.reload({ waitUntil: "networkidle2", timeout: 60_000 });
+    await page.waitForSelector(".label-hand", { timeout: 30_000 });
+    await wait(600);
     await capture(page, "shelf-empty.png");
 
     await uploadSamplePdfs(page);
-    await page.waitForFunction(
-      () => document.querySelectorAll("[data-book-id]").length >= 12,
-      { timeout: 120_000 },
-    );
-    await wait(1200);
+    await waitForBookCount(page, 24);
+    await wait(1500);
     await capture(page, "shelf-with-books.png");
 
     const firstBook = await page.$("[data-book-id]");
     if (firstBook) {
       await firstBook.click();
-      await wait(900);
+      await wait(1000);
       await capture(page, "shelf-book-pulled-out.png");
     }
 
@@ -74,8 +98,11 @@ async function main() {
     });
     if (!readClicked) throw new Error('Could not find "Read" button.');
 
+    await page.waitForSelector('[aria-label="Find in document"]', {
+      timeout: 30_000,
+    });
     await page.waitForSelector("canvas", { timeout: 30_000 });
-    await wait(1000);
+    await wait(1200);
     await capture(page, "reader.png");
   } finally {
     await browser.close();
