@@ -2,7 +2,7 @@
 
 A minimal, 3D bookshelf for your own PDFs — inspired by the bookshelf on
 [grizz.fyi](https://grizz.fyi). Add any book as a PDF and it lands on the shelf
-spine-out. Hover to pull a book out, click to read it. Everything is stored
+spine-out. Click to pull a book out, click again to read it. Everything is stored
 locally in your browser; your files never leave the device.
 
 ![Bookshelf with sample PDFs on the shelf](docs/images/shelf-with-books.png)
@@ -12,7 +12,7 @@ locally in your browser; your files never leave the device.
 | Shelf | Pull a book out | Read |
 | --- | --- | --- |
 | ![Shelf with colored spines](docs/images/shelf-with-books.png) | ![Book pulled out with cover visible](docs/images/shelf-book-pulled-out.png) | ![Full-screen PDF reader](docs/images/reader.png) |
-| Drop PDFs onto the shelf — covers and spines are generated automatically | Hover to swing the cover forward and reveal the title | Click **Read** for page navigation, zoom, and keyboard shortcuts |
+| Drop PDFs onto the shelf — covers and spines are generated automatically | Click a spine to swing the cover forward | Click **Read** or the cover again to open the reader |
 
 ## How it works
 

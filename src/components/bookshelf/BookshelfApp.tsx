@@ -6,7 +6,6 @@ import { Bookshelf } from "./Bookshelf";
 import { DropOverlay } from "./DropOverlay";
 import { QuoteSection } from "./QuoteSection";
 import { ImportProgressBar } from "./ImportProgressBar";
-import { LoadSamplesButton } from "./LoadSamplesButton";
 import { PdfReader } from "@/components/reader/PdfReader";
 
 export function BookshelfApp() {
@@ -80,16 +79,9 @@ export function BookshelfApp() {
         )}
 
         {loaded && books.length === 0 ? (
-          <div className="mt-6 space-y-3">
-            <p className="text-sm text-white/40">
-              The shelf is empty. Add your first PDF to get started.
-            </p>
-            <LoadSamplesButton />
-          </div>
-        ) : loaded ? (
-          <div className="mt-4">
-            <LoadSamplesButton />
-          </div>
+          <p className="mt-6 text-sm text-white/40">
+            The shelf is empty. Add your first PDF to get started.
+          </p>
         ) : null}
       </section>
 

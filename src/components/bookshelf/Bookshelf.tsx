@@ -47,7 +47,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     return () => observer.disconnect();
   }, [hasMore, loadingMore, loadMoreBooks, books.length]);
 
-  // Reserve right-side space on row-end books so hover expand does not wrap.
+  // Reserve right-side space on row-end books so click expand does not wrap.
   useLayoutEffect(() => {
     const grid = gridRef.current;
     if (!grid || books.length === 0) {
@@ -67,7 +67,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     return () => observer.disconnect();
   }, [books]);
 
-  // Scroll the hovered book into view.
+  // Scroll the active book into view.
   useEffect(() => {
     if (activeIndex < 0) return;
     const book = books[activeIndex];
@@ -77,6 +77,29 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     );
     el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
   }, [activeIndex, books]);
+
+  // Close the pulled-out book when clicking outside the shelf or pressing Escape.
+  useEffect(() => {
+    if (activeIndex < 0) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      const grid = gridRef.current;
+      if (!grid?.contains(event.target as Node)) {
+        setActiveIndex(-1);
+      }
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setActiveIndex(-1);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [activeIndex, setActiveIndex]);
 
   return (
     <div className="relative space-y-8">
@@ -117,9 +140,6 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
                   resumePage={readingProgress[book.id]?.page}
                   isOpen={isOpen}
                   onActivate={() => setActiveIndex(index)}
-                  onDeactivate={() => {
-                    if (activeIndex === index) setActiveIndex(-1);
-                  }}
                   onOpen={() => openReader(book.id)}
                   onRequestDelete={() => onRequestDelete(book.id)}
                   onNeedCover={() => void loadCover(book.id)}

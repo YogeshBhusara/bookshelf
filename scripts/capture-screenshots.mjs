@@ -1,8 +1,11 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
 
 const BASE_URL = process.env.SCREENSHOT_URL ?? "http://localhost:3000";
 const OUT_DIR = "docs/images";
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const CHROME =
   process.env.CHROME_PATH ??
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -17,16 +20,16 @@ async function capture(page, name) {
   console.log(`✓ ${path}`);
 }
 
-async function clickButtonWithText(page, text) {
-  const clicked = await page.evaluate((label) => {
-    const button = [...document.querySelectorAll("button")].find((node) =>
-      node.textContent?.includes(label),
-    );
-    if (!button) return false;
-    button.click();
-    return true;
-  }, text);
-  if (!clicked) throw new Error(`Button not found: ${text}`);
+async function uploadSamplePdfs(page) {
+  const manifestPath = path.join(ROOT, "public/samples/manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  const samplePaths = manifest.books.map((book) =>
+    path.join(ROOT, "public/samples", book.file),
+  );
+
+  const input = await page.$('input[type="file"][accept*="pdf"]');
+  if (!input) throw new Error("PDF file input not found.");
+  await input.uploadFile(...samplePaths);
 }
 
 async function main() {
@@ -46,7 +49,7 @@ async function main() {
     await wait(800);
     await capture(page, "shelf-empty.png");
 
-    await clickButtonWithText(page, "Load 12 sample PDFs");
+    await uploadSamplePdfs(page);
     await page.waitForFunction(
       () => document.querySelectorAll("[data-book-id]").length >= 12,
       { timeout: 120_000 },
@@ -56,12 +59,9 @@ async function main() {
 
     const firstBook = await page.$("[data-book-id]");
     if (firstBook) {
-      const box = await firstBook.boundingBox();
-      if (box) {
-        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-        await wait(900);
-        await capture(page, "shelf-book-pulled-out.png");
-      }
+      await firstBook.click();
+      await wait(900);
+      await capture(page, "shelf-book-pulled-out.png");
     }
 
     const readClicked = await page.evaluate(() => {

@@ -95,7 +95,19 @@ for (const s of samples) {
 
 await writeFile(
   `${outDir}/manifest.json`,
-  JSON.stringify({ files: written.map((w) => w.name) }, null, 2),
+  JSON.stringify(
+    {
+      books: written.map((w, i) => ({
+        file: w.name,
+        title: samples[i].title,
+        author: samples[i].author,
+        pages: samples[i].pages,
+        color: samples[i].color,
+      })),
+    },
+    null,
+    2,
+  ),
 );
 
 console.log(`\n${written.length} sample PDFs → public/samples/`);

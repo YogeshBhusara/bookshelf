@@ -10,7 +10,6 @@ interface BookSpineProps {
   resumePage?: number;
   isOpen: boolean;
   onActivate: () => void;
-  onDeactivate: () => void;
   onOpen: () => void;
   onRequestDelete: () => void;
   onNeedCover: () => void;
@@ -22,7 +21,6 @@ function BookSpineComponent({
   resumePage,
   isOpen,
   onActivate,
-  onDeactivate,
   onOpen,
   onRequestDelete,
   onNeedCover,
@@ -50,17 +48,9 @@ function BookSpineComponent({
       role="button"
       tabIndex={0}
       aria-label={
-        isOpen ? `Open “${book.title}” to read` : `Pull out “${book.title}”`
+        isOpen ? `Open “${book.title}” to read` : `Click to pull out “${book.title}”`
       }
       aria-pressed={isOpen}
-      onMouseEnter={onActivate}
-      onMouseLeave={onDeactivate}
-      onFocus={onActivate}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-          onDeactivate();
-        }
-      }}
       onClick={() => (isOpen ? onOpen() : onActivate())}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
