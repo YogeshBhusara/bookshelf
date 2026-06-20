@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bookshelf
 
-## Getting Started
+A minimal, 3D bookshelf for your own PDFs — inspired by the bookshelf on
+[grizz.fyi](https://grizz.fyi). Add any book as a PDF and it lands on the shelf
+spine-out. Hover to pull a book out, click to read it. Everything is stored
+locally in your browser; your files never leave the device.
 
-First, run the development server:
+## How it works
+
+- **3D shelf** — each book is a CSS 3D object. The cover/spine plane rotates
+  around its left edge (the binding): closed books sit at `rotateY(90deg)`
+  showing only the spine, the active book swings to `rotateY(0deg)` and its
+  footprint expands to the full cover width. This mirrors the grizz.fyi shelf.
+- **Covers & spines** — when you add a PDF, the first page is rendered to a
+  canvas (via `pdf.js`) and used as the cover. A dominant colour is sampled from
+  that page to generate a matching spine with the title set vertically.
+- **Reading** — clicking the pulled-out book opens a full-screen reader that
+  renders pages on demand with zoom, page navigation, and keyboard shortcuts.
+- **Storage** — book metadata and the PDF blobs are saved in **IndexedDB**, so
+  your shelf persists across reloads without any server.
+
+## Stack
+
+- Next.js 16 (App Router) · React 19 · TypeScript
+- Tailwind CSS v4
+- Zustand (state) · `idb` (IndexedDB) · `pdfjs-dist` (rendering)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the app, then drag a PDF anywhere onto the page (or click **Add a book**).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Try it with samples
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A few sample PDFs are generated into `public/samples`. Regenerate them with:
 
-## Learn More
+```bash
+node scripts/make-samples.mjs
+```
 
-To learn more about Next.js, take a look at the following resources:
+Then drag any file from `public/samples` onto the shelf.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Keyboard shortcuts (reader)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Key            | Action          |
+| -------------- | --------------- |
+| `←` / `→`      | Previous / next |
+| `+` / `-`      | Zoom in / out   |
+| `Esc`          | Close the book  |
 
-## Deploy on Vercel
+## Project structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/                  # routes, layout, theme
+├── components/
+│   ├── bookshelf/        # 3D shelf, books, add tile, drop overlay
+│   └── reader/           # full-screen PDF reader
+├── lib/                  # IndexedDB, pdf.js processing, colour sampling
+├── store/                # Zustand store
+└── types/                # shared types
+```
