@@ -5,6 +5,15 @@ A minimal, 3D bookshelf for your own PDFs — inspired by the bookshelf on
 spine-out. Hover to pull a book out, click to read it. Everything is stored
 locally in your browser; your files never leave the device.
 
+![Bookshelf with sample PDFs on the shelf](docs/images/shelf-with-books.png)
+
+## Preview
+
+| Shelf | Pull a book out | Read |
+| --- | --- | --- |
+| ![Shelf with colored spines](docs/images/shelf-with-books.png) | ![Book pulled out with cover visible](docs/images/shelf-book-pulled-out.png) | ![Full-screen PDF reader](docs/images/reader.png) |
+| Drop PDFs onto the shelf — covers and spines are generated automatically | Hover to swing the cover forward and reveal the title | Click **Read** for page navigation, zoom, and keyboard shortcuts |
+
 ## How it works
 
 - **3D shelf** — each book is a CSS 3D object. The cover/spine plane rotates
@@ -43,6 +52,15 @@ node scripts/make-samples.mjs
 ```
 
 Then drag any file from `public/samples` onto the shelf.
+
+### Refresh screenshots
+
+To regenerate the README preview images (requires a running dev server):
+
+```bash
+npm run dev
+npm run screenshots
+```
 
 ## Keyboard shortcuts (reader)
 
