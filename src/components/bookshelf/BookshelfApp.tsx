@@ -11,6 +11,8 @@ import { ImportProgressBar } from "./ImportProgressBar";
 import { PdfReader } from "@/components/reader/PdfReader";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { AppFooter } from "./AppFooter";
+import { AmbientSoundControl } from "@/components/reader/AmbientSoundControl";
+import { useAmbientSound } from "@/hooks/useAmbientSound";
 
 /** Dedupes sample seeding across Strict Mode remounts and in-flight requests. */
 let sampleSeedPromise: Promise<void> | null = null;
@@ -77,6 +79,8 @@ export function BookshelfApp() {
     [books, pendingDelete],
   );
 
+  const ambient = useAmbientSound(true);
+
   return (
     <main className="mx-auto min-h-screen w-full max-w-5xl px-6 py-8 sm:px-8 sm:py-12">
       <ImportProgressBar />
@@ -106,6 +110,7 @@ export function BookshelfApp() {
           {loaded ? (
             <div className="flex shrink-0 items-center gap-2">
               <AddBookButton onFiles={addBooks} importProgress={importProgress} />
+              {!readingBook ? <AmbientSoundControl {...ambient} /> : null}
               <ThemeToggle />
             </div>
           ) : null}
@@ -127,7 +132,7 @@ export function BookshelfApp() {
 
       {/* Reader */}
       {readingBook ? (
-        <PdfReader book={readingBook} onClose={closeReader} />
+        <PdfReader book={readingBook} onClose={closeReader} ambient={ambient} />
       ) : null}
 
       {/* Delete confirmation */}

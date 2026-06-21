@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "samples": "node scripts/make-samples.mjs",
-    "screenshots": "node scripts/capture-screenshots.mjs"
+    "screenshots": "node scripts/capture-screenshots.mjs",
+    "ambient": "node scripts/fetch-ambient.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",

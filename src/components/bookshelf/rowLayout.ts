@@ -53,13 +53,39 @@ export function getRowRange(
   rowEndIndices: Set<number>,
   bookCount: number,
 ): { start: number; end: number } {
-  const ends = [...rowEndIndices].sort((a, b) => a - b);
-  for (let i = 0; i < ends.length; i++) {
-    const end = ends[i];
-    const start = i === 0 ? 0 : ends[i - 1] + 1;
-    if (index >= start && index <= end) {
-      return { start, end };
+  const rows = getAllRowRanges(rowEndIndices, bookCount);
+  for (const row of rows) {
+    if (index >= row.start && index <= row.end) {
+      return row;
     }
   }
   return { start: 0, end: Math.max(0, bookCount - 1) };
+}
+
+/** All shelf rows, each ending at a row-end marker from layout. */
+export function getAllRowRanges(
+  rowEndIndices: Set<number>,
+  bookCount: number,
+): { start: number; end: number }[] {
+  if (bookCount === 0) return [];
+
+  if (rowEndIndices.size === 0) {
+    return [{ start: 0, end: bookCount - 1 }];
+  }
+
+  const ends = [...rowEndIndices].sort((a, b) => a - b);
+  const rows: { start: number; end: number }[] = [];
+
+  for (let i = 0; i < ends.length; i++) {
+    const end = ends[i];
+    const start = i === 0 ? 0 : ends[i - 1] + 1;
+    rows.push({ start, end });
+  }
+
+  const lastEnd = ends[ends.length - 1];
+  if (lastEnd < bookCount - 1) {
+    rows.push({ start: lastEnd + 1, end: bookCount - 1 });
+  }
+
+  return rows;
 }

@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  AmbientSoundControl,
+  type AmbientSoundApi,
+} from "@/components/reader/AmbientSoundControl";
 import { PdfPageView } from "@/components/reader/PdfPageView";
 import { ReaderSidebar } from "@/components/reader/ReaderSidebar";
 import { ReaderToolbar } from "@/components/reader/ReaderToolbar";
@@ -38,6 +42,7 @@ import type {
 interface PdfReaderProps {
   book: BookMeta;
   onClose: () => void;
+  ambient: AmbientSoundApi;
 }
 
 function getVisiblePages(
@@ -64,7 +69,7 @@ function goPrevPage(page: number, twoPage: boolean): number {
   return Math.max(1, page - 2);
 }
 
-export function PdfReader({ book, onClose }: PdfReaderProps) {
+export function PdfReader({ book, onClose, ambient }: PdfReaderProps) {
   const saveProgress = useBookStore((s) => s.saveProgress);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -659,39 +664,52 @@ export function PdfReader({ book, onClose }: PdfReaderProps) {
         </div>
 
         {!loading && !error && !presentation ? (
-          <footer className="reader-chrome flex items-center justify-center gap-4 border-t border-line px-5 py-3 backdrop-blur-md">
-            <IconButton label="Previous page" onClick={goPrev} disabled={page <= 1}>
-              <path d="M15 18l-6-6 6-6" />
-            </IconButton>
+          <footer
+            className={`reader-chrome relative flex items-center justify-center gap-4 border-t border-line px-5 py-3 backdrop-blur-md ${
+              ambient.panelOpen ? "z-20 overflow-visible" : ""
+            }`}
+          >
+            <div className="flex items-center justify-center gap-4">
+              <IconButton label="Previous page" onClick={goPrev} disabled={page <= 1}>
+                <path d="M15 18l-6-6 6-6" />
+              </IconButton>
 
-            <form
-              className="flex items-center gap-2 text-sm text-secondary"
-              onSubmit={(e) => {
-                e.preventDefault();
-                commitPageDraft();
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="number"
-                min={1}
-                max={totalPages}
-                value={pageDraft}
-                onChange={(e) => setPageDraft(e.target.value)}
-                onBlur={commitPageDraft}
-                className="w-14 rounded-md border border-line bg-control px-2 py-1 text-center text-foreground outline-none focus:border-strong"
+              <form
+                className="flex items-center gap-2 text-sm text-secondary"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  commitPageDraft();
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="number"
+                  min={1}
+                  max={totalPages}
+                  value={pageDraft}
+                  onChange={(e) => setPageDraft(e.target.value)}
+                  onBlur={commitPageDraft}
+                  className="w-14 rounded-md border border-line bg-control px-2 py-1 text-center text-foreground outline-none focus:border-strong"
+                />
+                <span className="tabular-nums">/ {totalPages}</span>
+                <span className="text-subtle">({progressPercent}%)</span>
+              </form>
+
+              <IconButton
+                label="Next page"
+                onClick={goNext}
+                disabled={page >= totalPages}
+              >
+                <path d="M9 18l6-6-6-6" />
+              </IconButton>
+            </div>
+
+            <div className="absolute right-5 top-1/2 -translate-y-1/2">
+              <AmbientSoundControl
+                {...ambient}
+                panelClassName="bottom-[calc(100%+0.5rem)] top-auto right-0"
               />
-              <span className="tabular-nums">/ {totalPages}</span>
-              <span className="text-subtle">({progressPercent}%)</span>
-            </form>
-
-            <IconButton
-              label="Next page"
-              onClick={goNext}
-              disabled={page >= totalPages}
-            >
-              <path d="M9 18l6-6-6-6" />
-            </IconButton>
+            </div>
           </footer>
         ) : null}
       </div>

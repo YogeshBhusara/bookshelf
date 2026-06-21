@@ -1,0 +1,78 @@
+{
+  "license": "Mixkit License — https://mixkit.co/license/",
+  "attribution": "Ambient loops from Mixkit (mixkit.co/free-sound-effects/)",
+  "sounds": [
+    {
+      "id": "rain",
+      "label": "Light rain",
+      "icon": "🌧️",
+      "file": "rain.mp3",
+      "mixkitId": 2393,
+      "mixkitSlug": "light-rain-loop",
+      "src": "/ambient/rain.mp3"
+    },
+    {
+      "id": "forest-rain",
+      "label": "Forest rain",
+      "icon": "🌲",
+      "file": "forest-rain.mp3",
+      "mixkitId": 1225,
+      "mixkitSlug": "forest-rain-loop",
+      "src": "/ambient/forest-rain.mp3"
+    },
+    {
+      "id": "ocean",
+      "label": "Ocean waves",
+      "icon": "🌊",
+      "file": "ocean.mp3",
+      "mixkitId": 1196,
+      "mixkitSlug": "sea-waves-loop",
+      "src": "/ambient/ocean.mp3"
+    },
+    {
+      "id": "wind",
+      "label": "Windy meadow",
+      "icon": "🍃",
+      "file": "wind.mp3",
+      "mixkitId": 1233,
+      "mixkitSlug": "wind-in-the-forest-loop",
+      "src": "/ambient/wind.mp3"
+    },
+    {
+      "id": "meadow",
+      "label": "Summer meadow",
+      "icon": "🦗",
+      "file": "meadow.mp3",
+      "mixkitId": 1789,
+      "mixkitSlug": "summer-night-crickets-loop",
+      "src": "/ambient/meadow.mp3"
+    },
+    {
+      "id": "fireplace",
+      "label": "Campfire",
+      "icon": "🔥",
+      "file": "fireplace.mp3",
+      "mixkitId": 1736,
+      "mixkitSlug": "campfire-night-wind",
+      "src": "/ambient/fireplace.mp3"
+    },
+    {
+      "id": "cafe",
+      "label": "Café ambience",
+      "icon": "☕",
+      "file": "cafe.mp3",
+      "mixkitId": 366,
+      "mixkitSlug": "hotel-conversation-and-laughter-with-dining-noise",
+      "src": "/ambient/cafe.mp3"
+    },
+    {
+      "id": "thunder",
+      "label": "Thunderstorm",
+      "icon": "⛈️",
+      "file": "thunder.mp3",
+      "mixkitId": 2402,
+      "mixkitSlug": "thunderstorm-and-rain-loop",
+      "src": "/ambient/thunder.mp3"
+    }
+  ]
+}

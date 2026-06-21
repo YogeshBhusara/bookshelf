@@ -1,18 +1,35 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useBookStore } from "@/store/useBookStore";
 import { BookSpine } from "./BookSpine";
 import { COVER_WIDTH, SHELF_HEIGHT } from "./constants";
-import { computeRowEndIndices, getRowRange } from "./rowLayout";
+import {
+  computeRowEndIndices,
+  getAllRowRanges,
+  getRowRange,
+} from "./rowLayout";
 
 interface BookshelfProps {
   onRequestDelete: (id: string) => void;
 }
 
+function ShelfPlank() {
+  return (
+    <>
+      <div className="mt-2 h-px w-full bg-line" aria-hidden />
+      <div
+        className="h-3 w-full"
+        style={{ background: "var(--shelf-sheen)" }}
+        aria-hidden
+      />
+    </>
+  );
+}
+
 export function Bookshelf({ onRequestDelete }: BookshelfProps) {
+  const shelfRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
   const [rowEndIndices, setRowEndIndices] = useState<Set<number>>(() => new Set());
 
   const books = useBookStore((s) => s.books);
@@ -27,7 +44,11 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
   const loadCover = useBookStore((s) => s.loadCover);
   const loadMoreBooks = useBookStore((s) => s.loadMoreBooks);
 
-  // Load more metadata when the sentinel scrolls into view.
+  const rows = useMemo(
+    () => getAllRowRanges(rowEndIndices, books.length),
+    [rowEndIndices, books.length],
+  );
+
   useEffect(() => {
     const node = loadMoreRef.current;
     if (!node || !hasMore) return;
@@ -44,27 +65,25 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
     return () => observer.disconnect();
   }, [hasMore, loadingMore, loadMoreBooks, books.length]);
 
-  // Reserve right-side space on row-end books so click expand does not wrap.
   useLayoutEffect(() => {
-    const grid = gridRef.current;
-    if (!grid || books.length === 0) {
+    const shelf = shelfRef.current;
+    if (!shelf || books.length === 0) {
       setRowEndIndices(new Set());
       return;
     }
 
     const updateRowEnds = () => {
-      const width = grid.clientWidth;
+      const width = shelf.clientWidth;
       setRowEndIndices(computeRowEndIndices(books, width));
     };
 
     updateRowEnds();
 
     const observer = new ResizeObserver(updateRowEnds);
-    observer.observe(grid);
+    observer.observe(shelf);
     return () => observer.disconnect();
   }, [books]);
 
-  // Close the pulled-out book when clicking outside any book, or pressing Escape.
   useEffect(() => {
     if (activeIndex < 0) return;
 
@@ -96,9 +115,50 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
       ? COVER_WIDTH - books[activeIndex].spineWidth
       : 0;
 
+  const renderBook = (index: number) => {
+    const book = books[index];
+    const isOpen = index === activeIndex;
+    const reserveExpand = rowEndIndices.has(index);
+    const slotWidth = reserveExpand ? COVER_WIDTH : book.spineWidth;
+    const shouldShift =
+      expandShift > 0 &&
+      activeRow !== null &&
+      index > activeIndex &&
+      index <= activeRow.end;
+
+    return (
+      <div
+        key={book.id}
+        data-book-id={book.id}
+        data-book-index={index}
+        className={`book-slot-motion shrink-0 overflow-visible${shouldShift ? " is-shifted" : ""}`}
+        style={{
+          zIndex: isOpen ? 20 : shouldShift ? 2 : 1,
+          width: `${slotWidth}px`,
+          transform: shouldShift ? `translateX(${expandShift}px)` : undefined,
+          transitionDelay:
+            shouldShift && activeIndex >= 0
+              ? `${(index - activeIndex - 1) * 36}ms`
+              : undefined,
+        }}
+      >
+        <BookSpine
+          book={book}
+          coverDataUrl={covers[book.id]}
+          resumePage={readingProgress[book.id]?.page}
+          isOpen={isOpen}
+          onActivate={() => setActiveIndex(index)}
+          onOpen={() => openReader(book.id)}
+          onRequestDelete={() => onRequestDelete(book.id)}
+          onNeedCover={() => void loadCover(book.id)}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="relative">
-      <div>
+      <div ref={shelfRef}>
         {totalCount > 0 ? (
           <p className="mb-4 text-xs text-subtle">
             {books.length}
@@ -107,63 +167,36 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
           </p>
         ) : null}
 
-        {/* Tight flex wrap — books sit spine-to-spine and wrap into new rows naturally. */}
-        <div
-          ref={gridRef}
-          className="flex flex-wrap items-end gap-x-0.5 gap-y-8 overflow-visible pb-2"
-          style={{ minHeight: `${SHELF_HEIGHT}px`, perspective: "1400px" }}
-        >
-          {books.map((book, index) => {
-            const isOpen = index === activeIndex;
-            const reserveExpand = rowEndIndices.has(index);
-            const slotWidth = reserveExpand ? COVER_WIDTH : book.spineWidth;
-            const shouldShift =
-              expandShift > 0 &&
-              activeRow !== null &&
-              index > activeIndex &&
-              index <= activeRow.end;
-            return (
+        <div className="flex flex-col gap-y-10">
+          {rows.map((row, rowIndex) => (
+            <section
+              key={`shelf-row-${row.start}-${row.end}`}
+              className="shelf-row overflow-visible"
+              aria-label={`Shelf row ${rowIndex + 1}`}
+            >
               <div
-                key={book.id}
-                data-book-id={book.id}
-                data-book-index={index}
-                className={`book-slot-motion shrink-0 overflow-visible${shouldShift ? " is-shifted" : ""}`}
-                style={{
-                  zIndex: isOpen ? 20 : shouldShift ? 2 : 1,
-                  width: `${slotWidth}px`,
-                  transform: shouldShift ? `translateX(${expandShift}px)` : undefined,
-                  transitionDelay:
-                    shouldShift && activeIndex >= 0
-                      ? `${(index - activeIndex - 1) * 36}ms`
-                      : undefined,
-                }}
+                className="flex flex-wrap items-end gap-x-0.5 overflow-visible"
+                style={{ minHeight: `${SHELF_HEIGHT}px`, perspective: "1400px" }}
               >
-                <BookSpine
-                  book={book}
-                  coverDataUrl={covers[book.id]}
-                  resumePage={readingProgress[book.id]?.page}
-                  isOpen={isOpen}
-                  onActivate={() => setActiveIndex(index)}
-                  onOpen={() => openReader(book.id)}
-                  onRequestDelete={() => onRequestDelete(book.id)}
-                  onNeedCover={() => void loadCover(book.id)}
-                />
+                {books.slice(row.start, row.end + 1).map((_, offset) =>
+                  renderBook(row.start + offset),
+                )}
               </div>
-            );
-          })}
+              <ShelfPlank />
+            </section>
+          ))}
+
+          {books.length === 0 ? (
+            <section className="shelf-row" aria-label="Empty shelf">
+              <div style={{ minHeight: `${SHELF_HEIGHT}px` }} />
+              <ShelfPlank />
+            </section>
+          ) : null}
         </div>
 
         {hasMore ? (
           <div ref={loadMoreRef} className="h-8 w-full" aria-hidden />
         ) : null}
-
-        <div className="mt-2 h-px w-full bg-line" />
-        <div
-          className="h-3 w-full"
-          style={{
-            background: "var(--shelf-sheen)",
-          }}
-        />
       </div>
     </div>
   );
