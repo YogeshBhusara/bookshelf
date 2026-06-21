@@ -5,14 +5,10 @@ A minimal, 3D bookshelf for your own PDFs — inspired by the bookshelf on
 spine-out. Click to pull a book out, click again to read it. Everything is stored
 locally in your browser; your files never leave the device.
 
-![Bookshelf with sample PDFs on the shelf](docs/images/shelf-with-books.png)
-
 ## Preview
 
-| Shelf | Pull a book out | Read |
-| --- | --- | --- |
-| ![Shelf with colored spines](docs/images/shelf-with-books.png) | ![Book pulled out with cover visible](docs/images/shelf-book-pulled-out.png) | ![Full-screen PDF reader](docs/images/reader.png) |
-| Sample books load automatically on first visit | Click a spine to swing the cover forward | Click **Read** or the cover to zoom into the reader |
+Run the app locally — sample books load on first visit. Click a spine to pull it
+out, then **Read** to open the full-screen PDF reader.
 
 ## Features
 
@@ -83,13 +79,14 @@ Dummy books live in `public/samples/`. Regenerate them with:
 npm run samples
 ```
 
-### Refresh screenshots
+### Screenshots & demo video
 
-To regenerate the README preview images (requires a running dev server):
+Generate local preview assets (saved to `docs/`, gitignored):
 
 ```bash
 npm run dev
-npm run screenshots
+npm run screenshots   # PNGs in docs/images/
+npm run demo          # MP4/GIF in docs/demo/
 ```
 
 ## Keyboard shortcuts (reader)

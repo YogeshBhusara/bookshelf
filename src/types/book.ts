@@ -10,7 +10,7 @@ export interface BookMeta {
   spineTextColor: string;
   /** Visible spine thickness in px, derived from the page count. */
   spineWidth: number;
-  /** Subtle per-book lean angle (deg) so closed spines look natural on the shelf. */
+  /** Legacy per-book lean; shelf layout overrides via row position. */
   lean: number;
   /** Short lines pulled from the PDF body, shown in the rotating quote section. */
   quotes?: string[];

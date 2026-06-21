@@ -43,6 +43,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local docs, demos, and generated media (not for the repo)
+/docs/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

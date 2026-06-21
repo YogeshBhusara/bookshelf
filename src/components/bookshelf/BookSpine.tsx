@@ -6,6 +6,8 @@ import { COVER_WIDTH, SHELF_HEIGHT } from "./constants";
 
 interface BookSpineProps {
   book: BookMeta;
+  /** Row-based lean; first spine in a row is 0. */
+  lean?: number;
   coverDataUrl?: string;
   resumePage?: number;
   isOpen: boolean;
@@ -17,6 +19,7 @@ interface BookSpineProps {
 
 function BookSpineComponent({
   book,
+  lean: leanProp,
   coverDataUrl,
   resumePage,
   isOpen,
@@ -31,13 +34,15 @@ function BookSpineComponent({
     if (isOpen && !coverDataUrl) onNeedCover();
   }, [isOpen, coverDataUrl, onNeedCover]);
 
+  const lean = leanProp ?? book.lean;
+
   const innerStyle: CSSProperties = {
     width: `${COVER_WIDTH}px`,
     height: `${SHELF_HEIGHT}px`,
     transformStyle: "preserve-3d",
     transformOrigin: "left center",
     ["--spine-inset" as string]: `${(spineWidth * 0.18).toFixed(2)}px`,
-    ["--lean" as string]: `${book.lean}deg`,
+    ["--lean" as string]: `${lean}deg`,
   };
 
   return (

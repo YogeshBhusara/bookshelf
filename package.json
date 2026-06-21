@@ -9,6 +9,7 @@
     "lint": "eslint",
     "samples": "node scripts/make-samples.mjs",
     "screenshots": "node scripts/capture-screenshots.mjs",
+    "demo": "node scripts/capture-demo.mjs",
     "ambient": "node scripts/fetch-ambient.mjs"
   },
   "dependencies": {

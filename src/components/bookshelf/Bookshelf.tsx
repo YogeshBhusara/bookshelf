@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useBookStore } from "@/store/useBookStore";
 import { BookSpine } from "./BookSpine";
 import { COVER_WIDTH, SHELF_HEIGHT } from "./constants";
+import { spineLeanDegrees } from "@/lib/spine-lean";
 import {
   computeRowEndIndices,
   getAllRowRanges,
@@ -115,7 +116,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
       ? COVER_WIDTH - books[activeIndex].spineWidth
       : 0;
 
-  const renderBook = (index: number) => {
+  const renderBook = (index: number, rowStart: number) => {
     const book = books[index];
     const isOpen = index === activeIndex;
     const reserveExpand = rowEndIndices.has(index);
@@ -125,6 +126,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
       activeRow !== null &&
       index > activeIndex &&
       index <= activeRow.end;
+    const lean = spineLeanDegrees(book.id, index - rowStart);
 
     return (
       <div
@@ -144,6 +146,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
       >
         <BookSpine
           book={book}
+          lean={lean}
           coverDataUrl={covers[book.id]}
           resumePage={readingProgress[book.id]?.page}
           isOpen={isOpen}
@@ -179,7 +182,7 @@ export function Bookshelf({ onRequestDelete }: BookshelfProps) {
                 style={{ minHeight: `${SHELF_HEIGHT}px`, perspective: "1400px" }}
               >
                 {books.slice(row.start, row.end + 1).map((_, offset) =>
-                  renderBook(row.start + offset),
+                  renderBook(row.start + offset, row.start),
                 )}
               </div>
               <ShelfPlank />

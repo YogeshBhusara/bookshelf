@@ -1,5 +1,6 @@
 import { sampleDominantColor } from "@/lib/color";
 import { extractQuotesFromPdf } from "@/lib/quotes";
+import { spineLeanDegrees } from "@/lib/spine-lean";
 import type { BookMeta } from "@/types/book";
 import type * as PdfJs from "pdfjs-dist";
 
@@ -132,7 +133,7 @@ export async function processPdf(
     spineColor: color,
     spineTextColor: textColor,
     spineWidth: spineWidthForPages(pageCount),
-    lean: 1.4 + (hashString(id) % 12) / 10,
+    lean: spineLeanDegrees(id, 1),
     quotes,
     addedAt: Date.now(),
   };
@@ -151,12 +152,4 @@ export async function enrichBookQuotes(bookId: string, blob: Blob): Promise<stri
   } finally {
     await task.destroy();
   }
-}
-
-function hashString(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i += 1) {
-    h = (h * 31 + s.charCodeAt(i)) | 0;
-  }
-  return Math.abs(h);
 }
