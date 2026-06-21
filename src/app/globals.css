@@ -227,13 +227,25 @@ body {
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .book:not(.is-open) {
+    transition: transform 260ms var(--ease-smooth);
+  }
+
   .book:not(.is-open):hover {
     z-index: 10;
+    transform: translateX(8px);
   }
 
   .book:not(.is-open):hover .book-inner-motion[data-state="closed"] {
-    transform: translate3d(var(--spine-inset), -2px, 14px) rotate(var(--lean))
-      rotateY(76deg) scale(1.012);
+    transform: translate3d(calc(var(--spine-inset) + 5px), -3px, 18px)
+      rotate(calc(var(--lean) + 2deg)) rotateY(72deg) scale(1.014);
+    transition: transform 260ms var(--ease-smooth);
+  }
+
+  /* Books to the right of the hovered spine nudge aside like a loosened stack. */
+  .book-slot-motion:has(> .book:not(.is-open):hover)
+    ~ .book-slot-motion:not(.is-shifted) {
+    transform: translateX(6px);
     transition: transform 260ms var(--ease-smooth);
   }
 }
